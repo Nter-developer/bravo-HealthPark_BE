@@ -1,0 +1,16 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://capstone.cb37nwzxye38.ap-northeast-2.rds.amazonaws.com:3306/capstone?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    username: admin
+    password: admin1234
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+  mvc:
+    path-match:
+      matching-strategy: ant_path_matcher
