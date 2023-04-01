@@ -8,9 +8,8 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum State {
-
-    DOING("복용중"),
-    FINISHED("복용완료");
+    DOING("복용 중"),
+    FINISHED("복용 완료");
 
     private final String name;
 }

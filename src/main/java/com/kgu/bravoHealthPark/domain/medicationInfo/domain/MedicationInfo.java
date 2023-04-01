@@ -14,11 +14,10 @@ import java.time.LocalDate;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MedicationInfo {
-
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    @Column(name="mi_id")
-    private Long miId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="medInfo_id")
+    private Long medInfoId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="user_id")
@@ -30,9 +29,9 @@ public class MedicationInfo {
     @Enumerated(EnumType.STRING)
     private State state;
 
-    private String entpName;
-    private String itemName;
-    private int tablet; //몇 정
+    private String entpName; // 기업명
+    private String itemName; // 제품명
+    private int tablet; // 용량
     private int days;
     private LocalDate startDate;
     private LocalDate endDate;

@@ -12,9 +12,8 @@ import javax.persistence.*;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Calendar {
-
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "calendar_id")
     private Long calendarId;
 
@@ -23,7 +22,7 @@ public class Calendar {
     private Alarm alarm;
 
     @Enumerated(EnumType.STRING)
-    private Confirmation confirmation; //복용 여부 확인
+    private Confirmation confirmation; // 복용 여부 확인
     private int year;
     private int month;
     private int day;

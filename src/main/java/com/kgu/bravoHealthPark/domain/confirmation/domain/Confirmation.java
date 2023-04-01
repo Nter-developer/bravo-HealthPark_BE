@@ -8,7 +8,6 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum Confirmation {
-
     Yes("복용 완료"),
     No("미복용");
 

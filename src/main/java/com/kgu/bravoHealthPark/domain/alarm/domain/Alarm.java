@@ -23,24 +23,23 @@ public class Alarm {
     @JoinColumn(name = "mi_id")
     private MedicationInfo medicationInfo;
 
-    private String title; //알람 제목
+    private String title; // 알람 제목
 
-    private LocalTime time; //알람 시간
+    private LocalTime time; // 알람 시간
 
-    private LocalDate startDate; //알람 시작일
+    private LocalDate startDate; // 알람 시작일
 
-    private LocalDate endDate; //알람 종료일
+    private LocalDate endDate; // 알람 종료일
 
     @Enumerated(EnumType.STRING)
-    private Checking checking; //복용 여부 확인
+    private AlarmStatus alarmStatus; // 알람 확인, 복용 상태
 
-    public Alarm(MedicationInfo medicationInfo, String title, LocalTime time, Checking checking) {
+    public Alarm(MedicationInfo medicationInfo, String title, LocalTime time, AlarmStatus alarmStatus) {
         this.medicationInfo = medicationInfo;
         this.title = title;
         this.time = time;
         this.startDate = medicationInfo.getStartDate();
         this.endDate = medicationInfo.getEndDate();
-        this.checking = checking;
+        this.alarmStatus = alarmStatus;
     }
-
 }
