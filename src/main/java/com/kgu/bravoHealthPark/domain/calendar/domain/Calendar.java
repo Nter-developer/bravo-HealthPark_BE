@@ -21,15 +21,15 @@ public class Calendar {
     @JoinColumn(name = "alarm_id")
     private Alarm alarm;
 
-    @Enumerated(EnumType.STRING)
-    private Confirmation confirmation; // 복용 여부 확인
+//    @Enumerated(EnumType.STRING)
+//    private Confirmation confirmation; // 복용 여부 확인
     private int year;
     private int month;
     private int day;
 
     public Calendar(Alarm alarm, Confirmation confirmation, int year, int month, int day) {
         this.alarm = alarm;
-        this.confirmation = confirmation;
+//        this.confirmation = confirmation;
         this.year = year;
         this.month = month;
         this.day = day;
