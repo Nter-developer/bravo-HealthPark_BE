@@ -57,6 +57,7 @@ public class MedicationInfoController {
         return ResponseEntity.ok().body(medicationInfoDto);
     }
 
+    @ApiOperation("모든 medication Info정보 받기")
     @GetMapping("/all")
     public ResponseEntity<List<MedicationInfoDto>> allMedicationInfo(@RequestParam Long userId){
         List<MedicationInfo> medicationInfos = medicationInfoService.findAllByUserId(userId);
@@ -68,39 +69,12 @@ public class MedicationInfoController {
         return ResponseEntity.ok().body(medicationInfoDtos);
     }
 
+    @ApiOperation("복용정보 수정")
     @PatchMapping("/{medicationInfoId}")
     public ResponseEntity<MedicationInfoDto> updateInfo(@PathVariable Long medicationInfoId,
                                                         @RequestBody MedicationInfoForm form){
         MedicationInfo medicationInfo = medicationInfoService.findByMedicationInfoId(medicationInfoId);
         medicationInfoService.updateInfo(medicationInfo,form);
-
-        MedicationInfoDto medicationInfoDto = new MedicationInfoDto(medicationInfo);
-
-        return ResponseEntity.ok().body(medicationInfoDto);
-    }
-
-    /**
-     *  복용상태를 다시 먹는 상태로 바꾸는 거
-     */
-    @ApiOperation("복용중 상태로 바꾸기")
-    @PatchMapping("/firstState/{medicationInfoId}")
-    public ResponseEntity<MedicationInfoDto> updateFirstState(@PathVariable Long medicationInfoId){
-        MedicationInfo medicationInfo = medicationInfoService.findByMedicationInfoId(medicationInfoId);
-        medicationInfoService.startState(medicationInfo);
-
-        MedicationInfoDto medicationInfoDto = new MedicationInfoDto(medicationInfo);
-
-        return ResponseEntity.ok().body(medicationInfoDto);
-    }
-
-    /**
-     *   복용상태 다 먹은 상태로 바꾸는 거
-     */
-    @ApiOperation("복용완료 상태로 바꾸기")
-    @PatchMapping("/endState/{medicationInfoId}")
-    public ResponseEntity<MedicationInfoDto> updateEndState(@PathVariable Long medicationInfoId){
-        MedicationInfo medicationInfo = medicationInfoService.findByMedicationInfoId(medicationInfoId);
-        medicationInfoService.endState(medicationInfo);
 
         MedicationInfoDto medicationInfoDto = new MedicationInfoDto(medicationInfo);
 

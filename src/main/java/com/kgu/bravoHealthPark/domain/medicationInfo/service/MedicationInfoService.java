@@ -9,7 +9,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -58,6 +57,7 @@ public class MedicationInfoService {
                 medicationInfoForm.getTablet(),medicationInfoForm.getStartDate(),medicationInfoForm.getEndDate());
     }
 
+    // 복용상태 바꾸는거
     @Transactional
     public void changeState(MedicationInfo medicationInfo){
         medicationInfo.changeState();
