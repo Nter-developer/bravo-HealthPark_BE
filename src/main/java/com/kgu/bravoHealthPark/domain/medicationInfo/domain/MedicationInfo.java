@@ -3,7 +3,9 @@ package com.kgu.bravoHealthPark.domain.medicationInfo.domain;
 import com.kgu.bravoHealthPark.domain.state.domain.State;
 import com.kgu.bravoHealthPark.domain.type.domain.Type;
 import com.kgu.bravoHealthPark.domain.user.domain.User;
+
 import com.kgu.bravoHealthPark.domain.medicationInfo.dto.MedicationInfoForm;
+
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,10 +17,10 @@ import java.time.LocalDate;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MedicationInfo {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="med_Info_id")
+
     private Long medInfoId;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -31,9 +33,10 @@ public class MedicationInfo {
     @Enumerated(EnumType.STRING)
     private State state;
 
-    private String entpName;
-    private String itemName;
-    private int tablet; //몇 정
+
+    private String entpName; // 기업명
+    private String itemName; // 제품명
+    private int tablet; // 용량
     private int days;
     private LocalDate startDate;
     private LocalDate endDate;
@@ -78,4 +81,5 @@ public class MedicationInfo {
         this.endDate = medicationInfoForm.getEndDate();
         this.memo = medicationInfoForm.getMemo();
     }
+
 }
