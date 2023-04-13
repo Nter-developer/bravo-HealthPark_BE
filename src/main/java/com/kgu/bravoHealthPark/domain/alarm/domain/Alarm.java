@@ -16,6 +16,7 @@ public class Alarm {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
+
     @Column(name = "alarm_id")
     private Long alarmId;
 

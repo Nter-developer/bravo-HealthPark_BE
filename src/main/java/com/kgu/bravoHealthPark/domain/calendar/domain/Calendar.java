@@ -10,6 +10,7 @@ import javax.persistence.*;
 
 @Entity
 @Getter
+
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Calendar {
     @Id
@@ -26,7 +27,7 @@ public class Calendar {
     private int year;
     private int month;
     private int day;
-
+    
     public Calendar(Alarm alarm, Confirmation confirmation, int year, int month, int day) {
         this.alarm = alarm;
         this.confirmation = confirmation;
