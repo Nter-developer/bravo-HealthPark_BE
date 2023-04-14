@@ -17,8 +17,8 @@ public class MedicationInfoService {
 
     private final MedicationInfoRepository medicationInfoRepository;
 
-    public void save(MedicationInfo medicationInfo){
-        medicationInfoRepository.save(medicationInfo);
+    public MedicationInfo save(MedicationInfo medicationInfo){
+        return medicationInfoRepository.save(medicationInfo);
     }
 
     @Transactional
@@ -34,18 +34,6 @@ public class MedicationInfoService {
         return medicationInfoRepository.findAllByUser_UserId(userId);
     }
 
-    //약을 복용중 상태로 바꾸는거
-    @Transactional
-    public void startState(MedicationInfo medicationInfo){
-        medicationInfo.firstState();
-    }
-
-    // 약을 복용완료 상태로 바꾸는거
-    @Transactional
-    public void endState(MedicationInfo medicationInfo){
-        medicationInfo.lastState();
-    }
-
     //복용상태로 받는거
     public List<MedicationInfo> findByState(Long userId,State state){
         return medicationInfoRepository.findMedicationInfoByUser_UserIdAndStateIs(userId,state);
@@ -54,7 +42,7 @@ public class MedicationInfoService {
     @Transactional
     public void updateInfo(MedicationInfo medicationInfo,MedicationInfoForm medicationInfoForm){
         medicationInfo.updateInfo(medicationInfoForm.getEnptName(),medicationInfoForm.getItemName(),
-                medicationInfoForm.getTablet(),medicationInfoForm.getStartDate(),medicationInfoForm.getEndDate());
+                medicationInfoForm.getTablet(),medicationInfoForm.getDays(),medicationInfoForm.getEndDate(),medicationInfoForm.getMemo());
     }
 
     // 복용상태 바꾸는거

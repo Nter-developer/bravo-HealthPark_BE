@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,11 +33,11 @@ public class MedicationInfoController {
             @PathVariable Type type){
 
         User user = userService.findByUser(userId);
-        MedicationInfo medicationInfo = new MedicationInfo(user,medicationInfoForm,type);
-        medicationInfoService.startState(medicationInfo);
-        medicationInfoService.save(medicationInfo);
+        MedicationInfo medicationInfo = new MedicationInfo(user, LocalDate.now(),medicationInfoForm,type);
+        medicationInfo.firstState();
+        MedicationInfo saveMedicationInfo = medicationInfoService.save(medicationInfo);
 
-        MedicationInfoDto medicationInfoDto = new MedicationInfoDto(medicationInfo);
+        MedicationInfoDto medicationInfoDto = new MedicationInfoDto(saveMedicationInfo);
 
         return ResponseEntity.ok().body(medicationInfoDto);
     }

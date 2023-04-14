@@ -21,7 +21,7 @@ public class MedicationInfo {
     @Column(name="med_Info_id")
     private Long medInfoId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
     @JoinColumn(name="user_id")
     private User user;
 
@@ -56,25 +56,27 @@ public class MedicationInfo {
             this.state=State.DOING;
     }
 
-    public void updateInfo(String entpName,String itemName,int tablet,LocalDate startDate,LocalDate endDate){
+    public void updateInfo(String entpName,String itemName,int tablet,int days,LocalDate endDate,String memo){
+        this.startDate=LocalDate.now();
         this.entpName=entpName;
+        this.days=days;
         this.itemName=itemName;
         this.tablet=tablet;
-        this.startDate=startDate;
         this.endDate=endDate;
+        this.memo =memo;
     }
     public void updateType(Type type) {
         this.type = type;
     }
 
-    public MedicationInfo(User user, MedicationInfoForm medicationInfoForm,Type type) {
+    public MedicationInfo(User user, LocalDate startDate,MedicationInfoForm medicationInfoForm,Type type) {
         this.user = user;
         this.type = type;
         this.entpName = medicationInfoForm.getEnptName();
         this.itemName = medicationInfoForm.getItemName();
         this.tablet = medicationInfoForm.getTablet();
         this.days = medicationInfoForm.getDays();
-        this.startDate = medicationInfoForm.getStartDate();
+        this.startDate = startDate;
         this.endDate = medicationInfoForm.getEndDate();
         this.memo = medicationInfoForm.getMemo();
     }
