@@ -30,6 +30,7 @@ public class Calendar {
     private int day;
 
     public Calendar(Alarm alarm, AlarmStatus alarmStatus,  int year, int month, int day) {
+
         this.alarm = alarm;
         this.alarmStatus = alarmStatus;
         this.year = year;
