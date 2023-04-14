@@ -1,10 +1,12 @@
 package com.kgu.bravoHealthPark.domain.alarm.controller;
 
 import com.kgu.bravoHealthPark.domain.alarm.domain.Alarm;
+import com.kgu.bravoHealthPark.domain.alarm.domain.AlarmStatus;
 import com.kgu.bravoHealthPark.domain.alarm.dto.AlarmDto;
 import com.kgu.bravoHealthPark.domain.alarm.dto.AlarmForm;
 import com.kgu.bravoHealthPark.domain.alarm.service.AlarmService;
 import com.kgu.bravoHealthPark.domain.medicationInfo.domain.MedicationInfo;
+import com.kgu.bravoHealthPark.domain.medicationInfo.service.MedicationInfoService;
 import com.kgu.bravoHealthPark.domain.user.domain.User;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,92 +27,69 @@ import java.util.stream.Collectors;
 @RequestMapping("/alarm")
 public class AlarmController {
     private final AlarmService alarmService;
-//        private final MedicationInfoService medicationInfoService;
+    private final MedicationInfoService medicationInfoService;
 
     @ApiOperation(value = "알람 생성")
     @PostMapping("/create")
-    public ResponseEntity<Long> createAlarm(@RequestParam MedicationInfo medicationInfo,
-//                                            @RequestParam Long medicationInfoId
-                                            String title, LocalTime time) {
-//        MedicationInfo medicationInfo = medicationInfoService.findByMedicationInfoId(medicationInfoId);
-        Long alarmId = alarmService.alarm(medicationInfo, title, time);
+    public ResponseEntity<AlarmDto> createAlarm(Long medicationInfoId, String title, String time) {
+        MedicationInfo medicationInfo = medicationInfoService.findByMedicationInfoId(medicationInfoId);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+        LocalTime localTime = LocalTime.parse(time, formatter);
 
-        return ResponseEntity.ok().body(alarmId);
+        Alarm alarm = new Alarm(medicationInfo, title, localTime);
+        alarm.initStatus();
+
+        alarmService.save(alarm);
+
+        AlarmDto alarmDto = new AlarmDto(alarm);
+
+        return ResponseEntity.ok().body(alarmDto);
     }
 
     @ApiOperation(value = "알람 삭제")
     @DeleteMapping("/delete/{alarmId}")
-    public ResponseEntity<AlarmDto> deleteAlarm(@PathVariable Long alarmId, HttpServletRequest request) {
+    public ResponseEntity<AlarmDto> deleteAlarm(@PathVariable Long alarmId) {
         Alarm findAlarm = alarmService.findAlarmById(alarmId);
-//        HttpSession session = request.getSession();
-//        User loginUser = (User) session.getAttribute("loginUser");
-//
-//
-//        if (alarmService.checkLoginId(findAlarm, loginUser)) {
-//            alarmService.deleteAlarm(findAlarm);
-//        } else {
-//            System.out.println("로그인 정보가 일치하지 않아 삭제가 불가능합니다.");
-//        }
         alarmService.deleteAlarm(findAlarm);
+
         return ResponseEntity.ok().body(null);
     }
 
     @ApiOperation(value = "알람 수정")
     @PatchMapping("/update/{alarmId}")
-    public ResponseEntity<AlarmDto> updateAlarm(@PathVariable Long alarmId, @RequestBody AlarmForm form, HttpServletRequest request) {
+    public ResponseEntity<AlarmDto> updateAlarm(@PathVariable Long alarmId, @RequestParam AlarmForm form) {
         Alarm findAlarm = alarmService.findAlarmById(alarmId);
-//        HttpSession session = request.getSession();
-//        User loginUser = (User) session.getAttribute("loginUser");
-//
-//        if (alarmService.checkLoginId(findAlarm, loginUser)) {
-//            alarmService.updateAlarm(findAlarm, form);
-//        } else {
-//            System.out.println("로그인 정보가 일치하지 않아 변경이 불가능합니다.");
-//        }
         alarmService.updateAlarm(findAlarm, form);
+
         AlarmDto alarmDto = new AlarmDto(findAlarm);
 
         return ResponseEntity.ok().body(alarmDto);
     }
 
-    @ApiOperation(value = "알람 확인후 복용")
+    @ApiOperation(value = "알람 확인후 복용 상태 ")
     @PatchMapping("/update/alarmstatus/dose/{alarmId}")
-    public ResponseEntity<AlarmDto> updateAlarmStatusDose(@PathVariable Long alarmId, HttpServletRequest request) {
+    public ResponseEntity<AlarmDto> updateAlarmStatusDose(@PathVariable Long alarmId) {
         Alarm findAlarm = alarmService.findAlarmById(alarmId);
-//        HttpSession session = request.getSession();
-//        User loginUser = (User) session.getAttribute("loginUser");
-//
-//        if (alarmService.checkLoginId(findAlarm, loginUser)) {
-//            alarmService.changeAlarmDose(findAlarm);
-//        } else {
-//            System.out.println("로그인 정보가 일치하지 않아 변경이 불가능합니다.");
-//        }
         alarmService.changeAlarmDose(findAlarm);
+
         AlarmDto alarmDto = new AlarmDto(findAlarm);
 
         return ResponseEntity.ok().body(alarmDto);
     }
 
-    @ApiOperation(value = "알람 확인후 복용하지 않음")
+    @ApiOperation(value = "알람 확인후 복용하지 않음 상태")
     @PatchMapping("/update/alarmstatus/notdose/{alarmId}")
-    public ResponseEntity<AlarmDto> updateUncheck(@PathVariable Long alarmId, HttpServletRequest request) {
+    public ResponseEntity<AlarmDto> updateUncheck(@PathVariable Long alarmId) {
         Alarm findAlarm = alarmService.findAlarmById(alarmId);
-//        HttpSession session = request.getSession();
-//        User loginUser = (User) session.getAttribute("loginUser");
-
-//        if (alarmService.checkLoginId(findAlarm, loginUser)) {
-//            alarmService.changeAlarmNotDose(findAlarm);
-//        } else {
-//            System.out.println("로그인 정보가 일치하지 않아 변경이 불가능합니다.");
-//        }
         alarmService.changeAlarmNotDose(findAlarm);
+
         AlarmDto alarmDto = new AlarmDto(findAlarm);
 
         return ResponseEntity.ok().body(alarmDto);
     }
 
     @ApiOperation(value = "알람 Id로 찾기")
-    @GetMapping("/search/{alarmId}")
+    @GetMapping("/search/alarm/{alarmId}")
     public ResponseEntity<AlarmDto> searchAlarmById(@PathVariable Long alarmId) {
         Alarm findAlarm = alarmService.findAlarmById(alarmId);
 
@@ -130,10 +110,46 @@ public class AlarmController {
         return ResponseEntity.ok().body(result);
     }
 
-    @ApiOperation(value = "약 이름으로 알람 찾기")
-    @GetMapping("/search/name/{title}")
-    public ResponseEntity<List<AlarmDto>> searchAlarmByTitle(@PathVariable String title) {
+    @ApiOperation(value = "알람 이름으로 알람 찾기")
+    @GetMapping("/search/title")
+    public ResponseEntity<List<AlarmDto>> searchAlarmByTitle(@RequestParam String title) {
         List<Alarm> alarmList = alarmService.findAlarmByTitle(title);
+
+        List<AlarmDto> result = alarmList.stream()
+                .map(a -> new AlarmDto(a))
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok().body(result);
+    }
+
+    @ApiOperation(value = "알람 상태로 알람 찾기")
+    @GetMapping("/search/status")
+    public ResponseEntity<List<AlarmDto>> searchAlarmByStatus(@RequestParam AlarmStatus alarmStatus) {
+        List<Alarm> alarmList = alarmService.findAlarmByStatus(alarmStatus);
+
+        List<AlarmDto> result = alarmList.stream()
+                .map(a -> new AlarmDto(a))
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok().body(result);
+    }
+
+    @ApiOperation(value = "유저별 알람 찾기")
+    @GetMapping("/search/user/{userId}")
+    public ResponseEntity<List<AlarmDto>> searchAlarmByUser(@PathVariable Long userId) {
+        List<Alarm> alarmList = alarmService.findAlarmByUser(userId);
+
+        List<AlarmDto> result = alarmList.stream()
+                .map(a -> new AlarmDto(a))
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok().body(result);
+    }
+
+    @ApiOperation(value = "유저별 알람 상태에 따라알람 찾기")
+    @GetMapping("/search/user/status/{userId}")
+    public ResponseEntity<List<AlarmDto>> searchAlarmByUserAndStatus(@PathVariable Long userId, @RequestParam AlarmStatus alarmStatus) {
+        List<Alarm> alarmList = alarmService.findAlarmByUserAndStatus(userId, alarmStatus);
 
         List<AlarmDto> result = alarmList.stream()
                 .map(a -> new AlarmDto(a))

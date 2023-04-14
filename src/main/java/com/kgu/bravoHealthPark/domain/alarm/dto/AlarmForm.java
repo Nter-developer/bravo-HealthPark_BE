@@ -10,7 +10,7 @@ import java.time.LocalTime;
 public class AlarmForm {
     private String title; // 알람 제목
 
-    @DateTimeFormat(pattern = "HH:mm:ss")
+    @DateTimeFormat(pattern = "HH:mm")
     private LocalTime time; // 알람 시간
 
     private LocalDate startDate; // 알람 시작일

@@ -1,6 +1,7 @@
 package com.kgu.bravoHealthPark.domain.alarm.domain;
 
 import com.kgu.bravoHealthPark.domain.medicationInfo.domain.MedicationInfo;
+import com.kgu.bravoHealthPark.domain.user.domain.User;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,13 +21,13 @@ public class Alarm {
     @Column(name = "alarm_id")
     private Long alarmId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "med_Info_id")
     private MedicationInfo medicationInfo;
 
     private String title; // 알람 제목
 
-    @DateTimeFormat(pattern = "HH:mm:ss")
+    @DateTimeFormat(pattern = "HH:mm")
     private LocalTime time; // 알람 시간
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")

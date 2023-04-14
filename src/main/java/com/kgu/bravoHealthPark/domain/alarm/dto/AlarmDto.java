@@ -15,7 +15,7 @@ public class AlarmDto {
 
     private String title;
 
-    @DateTimeFormat(pattern = "HH:mm:ss")
+    @DateTimeFormat(pattern = "HH:mm")
     private LocalTime time;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
@@ -23,7 +23,6 @@ public class AlarmDto {
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate endDate;
-
 
     @Enumerated(EnumType.STRING)
     private AlarmStatus alarmStatus;
