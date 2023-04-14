@@ -13,8 +13,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-
 import java.time.LocalDate;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,7 +38,6 @@ public class MedicationInfoController {
         MedicationInfo saveMedicationInfo = medicationInfoService.save(medicationInfo);
 
         MedicationInfoDto medicationInfoDto = new MedicationInfoDto(saveMedicationInfo);
-
         return ResponseEntity.ok().body(medicationInfoDto);
     }
 

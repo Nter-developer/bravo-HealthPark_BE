@@ -3,7 +3,9 @@ package com.kgu.bravoHealthPark.domain.medicationInfo.domain;
 import com.kgu.bravoHealthPark.domain.state.domain.State;
 import com.kgu.bravoHealthPark.domain.type.domain.Type;
 import com.kgu.bravoHealthPark.domain.user.domain.User;
+
 import com.kgu.bravoHealthPark.domain.medicationInfo.dto.MedicationInfoForm;
+
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,6 +24,7 @@ public class MedicationInfo {
     private Long medInfoId;
 
     @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+
     @JoinColumn(name="user_id")
     private User user;
 
@@ -34,6 +37,7 @@ public class MedicationInfo {
     private String entpName;
     private String itemName;
     private int tablet; //몇 정
+
     private int days;
     private LocalDate startDate;
     private LocalDate endDate;
@@ -64,6 +68,7 @@ public class MedicationInfo {
         this.tablet=tablet;
         this.endDate=endDate;
         this.memo =memo;
+
     }
     public void updateType(Type type) {
         this.type = type;
