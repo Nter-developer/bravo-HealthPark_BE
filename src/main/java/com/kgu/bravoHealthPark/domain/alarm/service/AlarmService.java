@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class AlarmService {
     private final AlarmRepository alarmRepository;
@@ -20,6 +20,7 @@ public class AlarmService {
     /**
      * 생성
      */
+    @Transactional
     public Alarm save(Alarm alarm) {
         alarmRepository.save(alarm);
         return alarm;
@@ -28,6 +29,7 @@ public class AlarmService {
     /**
      * 삭제
      */
+    @Transactional
     public void deleteAlarm(Alarm alarm) {
         alarmRepository.delete(alarm);
     }
@@ -36,16 +38,19 @@ public class AlarmService {
      * 수정
      */
     //폼을 이용해서 제목, 시간, 시작일, 종료일 변경
+    @Transactional
     public void updateAlarm(Alarm alarm, AlarmForm form) {
         alarm.updateAlarm(form.getTitle(), form.getTime(), form.getStartDate(), form.getEndDate());
     }
 
     //알람 확인 후 복용으로 상태 변경
+    @Transactional
     public void changeAlarmDose(Alarm alarm) {
         alarm.changeAlarmStatus(AlarmStatus.DOSE);
     }
 
     //알람 확인 후 복용하지 않음으로 상태 변경
+    @Transactional
     public void changeAlarmNotDose(Alarm alarm) {
         alarm.changeAlarmStatus(AlarmStatus.NOT_DOSE);
     }

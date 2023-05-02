@@ -32,7 +32,7 @@ public class MedicationInfoController {
             @RequestBody MedicationInfoForm medicationInfoForm,
             @PathVariable Type type){
 
-        User user = userService.findByUser(userId);
+        User user = userService.findUserById(userId);
         MedicationInfo medicationInfo = new MedicationInfo(user, LocalDate.now(),medicationInfoForm,type);
         medicationInfo.firstState();
         MedicationInfo saveMedicationInfo = medicationInfoService.save(medicationInfo);

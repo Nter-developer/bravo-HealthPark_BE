@@ -58,11 +58,9 @@ class AlarmServiceTest {
         medicationInfoForm.setItemName("test");
         medicationInfoForm.setMemo("약");
         medicationInfoForm.setTablet(1);
-        medicationInfoForm.setStartDate(LocalDate.now());
         medicationInfoForm.setEndDate(LocalDate.now());
 
-        MedicationInfo medicationInfo = new MedicationInfo(save, medicationInfoForm, Type.VitaminC);
-        medicationInfoService.startState(medicationInfo);
+        MedicationInfo medicationInfo = new MedicationInfo(save, LocalDate.now(), medicationInfoForm, Type.VitaminC);
         medicationInfoRepository.save(medicationInfo);
         Alarm alarm = new Alarm(medicationInfo, "알람", LocalTime.of(12, 0));
         alarmRepository.save(alarm);
@@ -98,11 +96,9 @@ class AlarmServiceTest {
         medicationInfoForm.setItemName("test");
         medicationInfoForm.setMemo("약");
         medicationInfoForm.setTablet(1);
-        medicationInfoForm.setStartDate(LocalDate.now());
         medicationInfoForm.setEndDate(LocalDate.now());
 
-        MedicationInfo medicationInfo = new MedicationInfo(save, medicationInfoForm, Type.VitaminC);
-        medicationInfoService.startState(medicationInfo);
+        MedicationInfo medicationInfo = new MedicationInfo(save,LocalDate.now(), medicationInfoForm, Type.VitaminC);
         medicationInfoService.save(medicationInfo);
 
         Alarm alarm1 = new Alarm(medicationInfo, "알람", LocalTime.of(12, 0));
