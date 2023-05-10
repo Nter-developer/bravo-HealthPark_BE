@@ -3,30 +3,41 @@ package com.kgu.bravoHealthPark.domain.user.service;
 import com.kgu.bravoHealthPark.domain.user.domain.User;
 import com.kgu.bravoHealthPark.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import javax.transaction.Transactional;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
 public class CustomUserDetailService implements UserDetailsService {
-    private UserRepository userRepository;
-
-    public CustomUserDetailService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+    private final UserRepository userRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String name) throws UsernameNotFoundException {
-        User user = userRepository.findByName(name);
-        if (user == null) {
-            throw new UsernameNotFoundException(name + "의 유저가 존재하지 않습니다.");
+    @Transactional
+    public UserDetails loadUserByUsername(final String username) {
+        return userRepository.findOneWithAuthoritiesByUsername(username)
+                .map(user -> createUser(username, user))
+                .orElseThrow(() -> new UsernameNotFoundException(username + " -> 데이터베이스에서 찾을 수 없습니다."));
+    }
+
+    private org.springframework.security.core.userdetails.User createUser(String username, User user) {
+        if (!user.isActivated()) {
+            throw new RuntimeException(username + " -> 활성화되어 있지 않습니다.");
         }
-        return new org.springframework.security.core.userdetails.User(
-                user.getName(), user.getPhoneNumber(), new ArrayList<>()
-        );
+
+        List<GrantedAuthority> grantedAuthorities = user.getAuthorities().stream()
+                .map(authority -> new SimpleGrantedAuthority(authority.getAuthorityName()))
+                .collect(Collectors.toList());
+
+        return new org.springframework.security.core.userdetails.User(user.getUsername(),
+                user.getPhoneNumber(),
+                grantedAuthorities);
     }
 }

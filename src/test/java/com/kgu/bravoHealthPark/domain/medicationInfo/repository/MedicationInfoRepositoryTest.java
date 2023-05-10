@@ -32,7 +32,7 @@ class MedicationInfoRepositoryTest {
 
         User user= User.builder()
                 .phoneNumber("010-4851-1564")
-                .name("김철수")
+                .username("김철수")
                 .build();
         MedicationInfoForm medicationInfoForm = new MedicationInfoForm();
         medicationInfoForm.setDays(4);
@@ -66,7 +66,7 @@ class MedicationInfoRepositoryTest {
 
         User user= User.builder()
                 .phoneNumber("010-4851-1564")
-                .name("김철수")
+                .username("김철수")
                 .build();
         MedicationInfoForm medicationInfoForm = new MedicationInfoForm();
         medicationInfoForm.setDays(4);
@@ -93,7 +93,7 @@ class MedicationInfoRepositoryTest {
 
         User user= User.builder()
                 .phoneNumber("010-4851-1564")
-                .name("김철수")
+                .username("김철수")
                 .build();
 
         MedicationInfoForm medicationInfoForm1 = new MedicationInfoForm();
@@ -136,12 +136,12 @@ class MedicationInfoRepositoryTest {
 
         User user1= User.builder()
                 .phoneNumber("010-4851-1564")
-                .name("김철수")
+                .username("김철수")
                 .build();
 
         User user2= User.builder()
                 .phoneNumber("010-1234-5678")
-                .name("나나나")
+                .username("나나나")
                 .build();
 
         User saveUser1 = userRepository.save(user1);
@@ -216,12 +216,12 @@ class MedicationInfoRepositoryTest {
 
         User user1= User.builder()
                 .phoneNumber("010-4851-1564")
-                .name("김철수")
+                .username("김철수")
                 .build();
 
         User user2= User.builder()
                 .phoneNumber("010-1234-5678")
-                .name("나나나")
+                .username("나나나")
                 .build();
 
         User saveUser1 = userRepository.save(user1);
@@ -299,12 +299,12 @@ class MedicationInfoRepositoryTest {
 
         User user1= User.builder()
                 .phoneNumber("010-4851-1564")
-                .name("김철수")
+                .username("김철수")
                 .build();
 
         User user2= User.builder()
                 .phoneNumber("010-1234-5678")
-                .name("나나나")
+                .username("나나나")
                 .build();
 
         User saveUser1 = userRepository.save(user1);
