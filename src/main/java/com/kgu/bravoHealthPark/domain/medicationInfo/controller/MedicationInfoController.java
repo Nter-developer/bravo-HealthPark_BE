@@ -42,7 +42,7 @@ public class MedicationInfoController {
     }
 
     @DeleteMapping("/{medicationInfoId}")
-    public ResponseEntity delete(@PathVariable Long medicationInfoId){
+    public ResponseEntity<?> delete(@PathVariable Long medicationInfoId){
         medicationInfoService.delete(medicationInfoId);
 
         return ResponseEntity.ok().body(null);

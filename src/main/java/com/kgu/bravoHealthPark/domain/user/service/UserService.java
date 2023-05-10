@@ -1,20 +1,18 @@
 package com.kgu.bravoHealthPark.domain.user.service;
 
 
-import com.kgu.bravoHealthPark.config.jwt.JwtTokenProvider;
-import com.kgu.bravoHealthPark.config.jwt.SecurityConfig;
 import com.kgu.bravoHealthPark.domain.user.domain.User;
-import com.kgu.bravoHealthPark.domain.user.dto.LoginForm;
-import com.kgu.bravoHealthPark.domain.user.dto.SignUpForm;
+import com.kgu.bravoHealthPark.domain.user.domain.Authority;
+import com.kgu.bravoHealthPark.domain.user.dto.UserDto;
+import com.kgu.bravoHealthPark.domain.user.jwt.exception.NotFoundMemberException;
+import com.kgu.bravoHealthPark.domain.user.jwt.util.SecurityUtil;
 import com.kgu.bravoHealthPark.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -22,18 +20,17 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
-    private final SecurityConfig securityConfig;
-    private final AuthenticationManagerBuilder authenticationManagerBuilder;
-    private final JwtTokenProvider jwtTokenProvider;
+    private final PasswordEncoder passwordEncoder;
+    /*
 
+     */
 
     /**
      * 생성
      */
+
     @Transactional
     public User join(User user) {
-        hasDuplicateUser(user); //중복 계정 확인
-
         userRepository.save(user);
         return user;
     }
@@ -41,6 +38,7 @@ public class UserService {
     /**
      * 삭제
      */
+
     @Transactional
     public void delete(User user) {
         userRepository.delete(user);
@@ -49,9 +47,15 @@ public class UserService {
     /**
      * 검색
      */
+
     public User findUserById(Long userId) {
         User user = userRepository.findByUserId(userId);
         return user;
+    }
+
+    public List<User> findUserByUsername(String username) {
+        List<User> userList = userRepository.findListByUsername(username);
+        return userList;
     }
 
     public User findUserByPhoneNumber(String phoneNumber) {
@@ -59,47 +63,80 @@ public class UserService {
         return user;
     }
 
-    public User findUserByNameAndPhoneNumber(String name, String phoneNumber) {
-        User user = userRepository.findByNameAndPhoneNumber(name, phoneNumber);
+    public User findUserByIdAndPhoneNumber(String id, String phoneNumber) {
+        User user = userRepository.findByIdAndPhoneNumber(id, phoneNumber);
         return user;
     }
 
-    public User findUserByName(String name) {
-        User user = userRepository.findByName(name);
+    public User findUserById(String id) {
+        User user = userRepository.findById(id);
         return user;
     }
 
-    public List<User> findUserListByName(String name) {
-        List<User> userList = userRepository.findListByName(name);
+
+    public List<User> findUserListById(String id) {
+        List<User> userList = userRepository.findListById(id);
         return userList;
     }
 
     public List<User> findUserListByPhoneNumber(String phoneNumber) {
-        List<User> userList = userRepository.findListByName(phoneNumber);
+        List<User> userList = userRepository.findListById(phoneNumber);
         return userList;
     }
 
-    private void hasDuplicateUser(User user) {
-        List<User> findUsers = userRepository.findListByPhoneNumber(user.getPhoneNumber());
-        if (!findUsers.isEmpty()) {
-            throw new IllegalStateException("이미 존재하는 전화번호 입니다");
+
+//    public boolean matches(CharSequence password, String encodedPassword) {
+//        System.out.println(passwordEncoder.matches(password, encodedPassword));
+//        return passwordEncoder.matches(password, encodedPassword);
+//    }
+
+    @Transactional
+    public UserDto signup(UserDto userDto) {
+
+        if (userDto.getId().equals("admin")) {
+            Authority authority = Authority.builder()
+                    .authorityName("ROLE_ADMIN")
+                    .build();
+
+            User user = User.builder()
+                    .id(userDto.getId())
+                    .username(userDto.getUsername())
+                    .phoneNumber(passwordEncoder.encode(userDto.getPhoneNumber()))
+                    .authorities(Collections.singleton(authority))
+                    .activated(true)
+                    .build();
+
+            return UserDto.from(userRepository.save(user));
+        } else {
+
+            Authority authority = Authority.builder()
+                    .authorityName("ROLE_USER")
+                    .build();
+
+            User user = User.builder()
+                    .id(userDto.getId())
+                    .username(userDto.getUsername())
+                    .phoneNumber(passwordEncoder.encode(userDto.getPhoneNumber()))
+                    .authorities(Collections.singleton(authority))
+                    .activated(true)
+                    .build();
+
+            return UserDto.from(userRepository.save(user));
         }
     }
 
-    @Transactional
-    public Long signup(SignUpForm signUpForm) {
-        BCryptPasswordEncoder encoder = securityConfig.bCryptPasswordEncoder();
-        String encode = encoder.encode(signUpForm.getPhoneNumber());
-        User user = userRepository.save(signUpForm.toEntity(encode));
-        return user.getUserId();
+    @Transactional(readOnly = true)
+    public UserDto getUserWithAuthorities(String id) {
+        return UserDto.from(userRepository.findOneWithAuthoritiesById(id).orElse(null));
     }
 
-    @Transactional
-    public String login(LoginForm loginForm) {
-        User user = userRepository.findByPhoneNumber(loginForm.getPhoneNumber());
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(user.getName(), user.getEncPhoneNumber());
-        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-        return jwtTokenProvider.generateToken(authentication);
+    @Transactional(readOnly = true)
+    public UserDto getMyUserWithAuthorities() {
+        return UserDto.from(
+                SecurityUtil.getCurrentUsername()
+                        .flatMap(userRepository::findOneWithAuthoritiesById)
+                        .orElseThrow(() -> new NotFoundMemberException("Member not found"))
+        );
     }
 
 }

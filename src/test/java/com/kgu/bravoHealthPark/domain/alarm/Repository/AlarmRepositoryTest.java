@@ -21,7 +21,6 @@ import java.time.LocalTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
@@ -48,7 +47,7 @@ class AlarmRepositoryTest {
         //given
         User user = User.builder()
                 .phoneNumber("010-1234-5678")
-                .name("홍길동")
+                .id("홍길동")
                 .build();
 
         User save = userRepository.save(user);
@@ -79,7 +78,7 @@ class AlarmRepositoryTest {
         //given
         User user = User.builder()
                 .phoneNumber("010-1234-5678")
-                .name("홍길동")
+                .id("홍길동")
                 .build();
 
         User save = userRepository.save(user);
@@ -110,12 +109,12 @@ class AlarmRepositoryTest {
         //given
         User user1 = User.builder()
                 .phoneNumber("010-1234-5678")
-                .name("홍길동")
+                .id("홍길동")
                 .build();
 
         User user2 = User.builder()
                 .phoneNumber("010-1234-5678")
-                .name("김길동")
+                .id("김길동")
                 .build();
 
         User save1 = userRepository.save(user1);
@@ -155,12 +154,12 @@ class AlarmRepositoryTest {
         //given
         User user1 = User.builder()
                 .phoneNumber("010-1234-5678")
-                .name("홍길동")
+                .id("홍길동")
                 .build();
 
         User user2 = User.builder()
                 .phoneNumber("010-1234-5678")
-                .name("김길동")
+                .id("김길동")
                 .build();
 
         User save1 = userRepository.save(user1);
@@ -202,12 +201,12 @@ class AlarmRepositoryTest {
         //given
         User user1 = User.builder()
                 .phoneNumber("010-1234-5678")
-                .name("홍길동")
+                .id("홍길동")
                 .build();
 
         User user2 = User.builder()
                 .phoneNumber("010-1234-5678")
-                .name("김길동")
+                .id("김길동")
                 .build();
 
         User save1 = userRepository.save(user1);
@@ -247,12 +246,12 @@ class AlarmRepositoryTest {
         //given
         User user1 = User.builder()
                 .phoneNumber("010-1234-5678")
-                .name("홍길동")
+                .id("홍길동")
                 .build();
 
         User user2 = User.builder()
                 .phoneNumber("010-1234-5678")
-                .name("김길동")
+                .id("김길동")
                 .build();
 
         User save1 = userRepository.save(user1);
@@ -286,8 +285,8 @@ class AlarmRepositoryTest {
         //then All 조회 테스트
         assertThat(alarmByUser1.size()).isEqualTo(1);
         assertThat(alarmByUser2.size()).isEqualTo(1);
-        assertThat(alarmByUser1.get(0).getMedicationInfo().getUser().getName()).isEqualTo("홍길동");
-        assertThat(alarmByUser2.get(0).getMedicationInfo().getUser().getName()).isEqualTo("김길동");
+        assertThat(alarmByUser1.get(0).getMedicationInfo().getUser().getId()).isEqualTo("홍길동");
+        assertThat(alarmByUser2.get(0).getMedicationInfo().getUser().getId()).isEqualTo("김길동");
     }
 
     @Test
@@ -295,12 +294,12 @@ class AlarmRepositoryTest {
         //given
         User user1 = User.builder()
                 .phoneNumber("010-1234-5678")
-                .name("홍길동")
+                .id("홍길동")
                 .build();
 
         User user2 = User.builder()
                 .phoneNumber("010-1234-5678")
-                .name("김길동")
+                .id("김길동")
                 .build();
 
         User save1 = userRepository.save(user1);
