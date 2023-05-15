@@ -46,7 +46,7 @@ class AlarmServiceTest {
         //given
         User user = User.builder()
                 .phoneNumber("010-1234-5678")
-                .name("홍길동")
+                .id("홍길동")
                 .build();
 
         User save = userRepository.save(user);
@@ -84,7 +84,7 @@ class AlarmServiceTest {
         //given
         User user = User.builder()
                 .phoneNumber("010-1234-5678")
-                .name("홍길동")
+                .id("홍길동")
                 .build();
 
         User save = userRepository.save(user);

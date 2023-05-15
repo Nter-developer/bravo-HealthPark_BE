@@ -21,7 +21,6 @@ public class CorsConfig {
         source.registerCorsConfiguration("/alarm/**", config);
         source.registerCorsConfiguration("/calendar/**", config);
         source.registerCorsConfiguration("/medicationInfo/**", config);
-        source.registerCorsConfiguration("/medicineInfo/**", config);
         return new CorsFilter(source);
     }
 }
