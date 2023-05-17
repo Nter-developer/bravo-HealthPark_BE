@@ -1,6 +1,5 @@
 package com.kgu.bravoHealthPark.domain.user.service;
 
-
 import com.kgu.bravoHealthPark.domain.user.domain.User;
 import com.kgu.bravoHealthPark.domain.user.domain.Authority;
 import com.kgu.bravoHealthPark.domain.user.dto.UserDto;
@@ -94,4 +93,5 @@ public class UserService {
                         .orElseThrow(() -> new NotFoundMemberException("Member not found"))
         );
     }
+
 }

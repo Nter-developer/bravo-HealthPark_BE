@@ -10,6 +10,19 @@ import javax.persistence.*;
 
 @Entity
 @Getter
+public class Calendar {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @Column(name="calendar_id")
+    private Long calendarId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="mi_id")
+    private MedicationInfo medicationInfo;
+
+    @Enumerated(EnumType.STRING)
+    private Confirmation confirmation;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Calendar {
 
@@ -29,6 +42,7 @@ public class Calendar {
     private int month;
     private int day;
 
+
     public Calendar(Alarm alarm, AlarmStatus alarmStatus,  int year, int month, int day) {
 
         this.alarm = alarm;
@@ -37,4 +51,5 @@ public class Calendar {
         this.month = month;
         this.day = day;
     }
+
 }
