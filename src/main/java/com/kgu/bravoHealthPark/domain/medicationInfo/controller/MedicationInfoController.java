@@ -34,7 +34,7 @@ public class MedicationInfoController {
             @RequestBody MedicationInfoForm medicationInfoForm,
             @PathVariable Type type){
 
-        User user = userService.findByUser(userId);
+        User user = userService.findUserById(userId);
         MedicationInfo medicationInfo = new MedicationInfo(user, LocalDate.now(),medicationInfoForm,type);
         medicationInfo.firstState();
         MedicationInfo saveMedicationInfo = medicationInfoService.save(medicationInfo);
@@ -44,7 +44,7 @@ public class MedicationInfoController {
     }
 
     @DeleteMapping("/{medicationInfoId}")
-    public ResponseEntity delete(@PathVariable Long medicationInfoId){
+    public ResponseEntity<?> delete(@PathVariable Long medicationInfoId){
         medicationInfoService.delete(medicationInfoId);
 
         return ResponseEntity.ok().body(null);

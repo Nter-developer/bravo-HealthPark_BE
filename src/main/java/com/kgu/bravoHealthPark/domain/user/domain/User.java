@@ -1,47 +1,40 @@
 package com.kgu.bravoHealthPark.domain.user.domain;
 
-
-import lombok.Getter;
+import lombok.*;
 
 import javax.persistence.*;
+import java.util.Set;
 
+@Getter
 @Entity
-@Getter
-public class User {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    @Column(name="user_id")
-    private Long userId;
-
-    private String phoneNumber;
-
-    private String name;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-
-import javax.persistence.*;
-
-@Getter
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Entity
 @Table(name = "user")
 public class User {
+
     @Id
+    @Column(name = "user_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
 
-    @Column(name = "phone_number", nullable = false)
+    @Column(name = "login_id", length = 50, unique = true)
+    private String loginId;
+
+    @Column(name = "user_name", length = 50)
+    private String username;
+
+    @Column(name = "phone_number", length = 100)
     private String phoneNumber;
 
-    @Column(name = "name", nullable = false)
-    private String name;
+    @Column(name = "activated")
+    private boolean activated;
 
-    @Builder
-    private User(String phoneNumber, String name) {
-        this.phoneNumber = phoneNumber;
-        this.name = name;
-    }
+    @ManyToMany
+    @JoinTable(
+            name = "user_authority",
+            joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "user_id")},
+            inverseJoinColumns = {@JoinColumn(name = "authority_name", referencedColumnName = "authority_name")})
+    private Set<Authority> authorities;
+
 }
