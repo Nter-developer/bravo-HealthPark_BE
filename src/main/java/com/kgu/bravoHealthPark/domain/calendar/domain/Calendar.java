@@ -10,19 +10,6 @@ import javax.persistence.*;
 
 @Entity
 @Getter
-public class Calendar {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    @Column(name="calendar_id")
-    private Long calendarId;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="mi_id")
-    private MedicationInfo medicationInfo;
-
-    @Enumerated(EnumType.STRING)
-    private Confirmation confirmation;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Calendar {
 
