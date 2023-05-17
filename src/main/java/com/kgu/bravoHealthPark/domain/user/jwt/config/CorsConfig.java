@@ -17,10 +17,11 @@ public class CorsConfig {
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
 
-        source.registerCorsConfiguration("/api/**", config);
+        source.registerCorsConfiguration("/user/**", config);
         source.registerCorsConfiguration("/alarm/**", config);
         source.registerCorsConfiguration("/calendar/**", config);
         source.registerCorsConfiguration("/medicationInfo/**", config);
+        source.registerCorsConfiguration("/medicionInfo/**", config);
         return new CorsFilter(source);
     }
 }

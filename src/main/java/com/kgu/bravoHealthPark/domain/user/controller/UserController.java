@@ -21,8 +21,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.List;
 
-@Api(tags = {"User Api"}, description = "유저 관련 Api (#8)")
+@Api(tags = {"User Api"}, description = "유저 관련 Api (#7)")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/user")
@@ -34,7 +36,7 @@ public class UserController {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
 
     @PostMapping("/signup")
-    public ResponseEntity<?> signup(@Valid @RequestBody UserDto userDto) {
+    public ResponseEntity<UserDto> signup(@Valid @RequestBody UserDto userDto) {
         return ResponseEntity.ok(userService.signup(userDto));
     }
 
@@ -58,6 +60,33 @@ public class UserController {
         return new ResponseEntity<>(new TokenDto(jwt), httpHeaders, HttpStatus.OK);
     }
 
+    @DeleteMapping("/{userId}")
+    public ResponseEntity<?> deleteUser(@PathVariable Long userId) {
+        User user = userService.findUserById(userId);
+        userService.delete(user);
+        return ResponseEntity.ok(null);
+    }
+
+    @GetMapping("/findUserById")
+    public ResponseEntity<UserDto> getUserById(@RequestParam Long userId) {
+        User user = userService.findUserById(userId);
+        UserDto userDto = UserDto.from(user);
+        return ResponseEntity.ok(userDto);
+    }
+
+    @GetMapping("/findAll")
+    public ResponseEntity<?> getAllUser() {
+        List<User> userAll = userService.findUserAll();
+        ArrayList<UserDto> dtoList = new ArrayList<>();
+
+        for (User user : userAll) {
+            UserDto userDto = UserDto.from(user);
+            dtoList.add(userDto);
+        }
+
+        return ResponseEntity.ok(dtoList);
+    }
+
     @GetMapping("/findUser")
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public ResponseEntity<UserDto> getMyUserInfo() {
@@ -69,22 +98,6 @@ public class UserController {
     public ResponseEntity<UserDto> getUserInfo(@RequestParam String username) {
         return ResponseEntity.ok(userService.getUserWithAuthorities(username));
     }
-
-    @GetMapping("/findUserById")
-    public ResponseEntity<UserDto> getUserById(@RequestParam Long userId){
-        User user = userService.findUserById(userId);
-        UserDto userDto = UserDto.from(user);
-        return ResponseEntity.ok(userDto);
-    }
-
-    @DeleteMapping("/{userId}")
-    public ResponseEntity<?> deleteUser(@PathVariable Long userId){
-        User user = userService.findUserById(userId);
-        userService.delete(user);
-        return ResponseEntity.ok(null);
-    }
-
-
 
 
 }

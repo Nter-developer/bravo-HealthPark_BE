@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
+import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -22,21 +23,8 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     /**
-     * 삭제
+     * 회원가입
      */
-
-    @Transactional
-    public void delete(User user) {
-        userRepository.delete(user);
-    }
-
-    /**
-     * 검색
-     */
-    public User findUserById(Long userId) {
-        return userRepository.findByUserId(userId);
-    }
-
     @Transactional
     public UserDto signup(UserDto userDto) {
 
@@ -70,6 +58,27 @@ public class UserService {
 
             return UserDto.from(userRepository.save(user));
         }
+    }
+
+    /**
+     * 삭제
+     */
+
+    @Transactional
+    public void delete(User user) {
+        userRepository.delete(user);
+    }
+
+
+    /**
+     * 검색
+     */
+    public User findUserById(Long userId) {
+        return userRepository.findByUserId(userId);
+    }
+
+    public List<User> findUserAll() {
+        return userRepository.findAll();
     }
 
     @Transactional(readOnly = true)
