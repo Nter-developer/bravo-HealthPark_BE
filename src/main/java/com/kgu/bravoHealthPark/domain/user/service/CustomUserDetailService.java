@@ -22,7 +22,7 @@ public class CustomUserDetailService implements UserDetailsService {
     @Override
     @Transactional
     public UserDetails loadUserByUsername(final String id) {
-        return userRepository.findOneWithAuthoritiesById(id)
+        return userRepository.findOneWithAuthoritiesByLoginId(id)
                 .map(user -> createUser(id, user))
                 .orElseThrow(() -> new UsernameNotFoundException(id + " -> 데이터베이스에서 찾을 수 없습니다."));
     }
@@ -36,7 +36,7 @@ public class CustomUserDetailService implements UserDetailsService {
                 .map(authority -> new SimpleGrantedAuthority(authority.getAuthorityName()))
                 .collect(Collectors.toList());
 
-        return new org.springframework.security.core.userdetails.User(user.getId(),
+        return new org.springframework.security.core.userdetails.User(user.getLoginId(),
                 user.getPhoneNumber(),
                 grantedAuthorities);
     }

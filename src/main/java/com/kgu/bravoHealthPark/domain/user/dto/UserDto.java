@@ -18,7 +18,7 @@ public class UserDto {
 
     @NotNull
     @Size(min = 3, max = 50)
-    private String id;
+    private String loginId;
 
     @Size(min = 3, max = 50)
     private String username;
@@ -36,7 +36,7 @@ public class UserDto {
 
         return UserDto.builder()
                 .username(user.getUsername())
-                .id(user.getId())
+                .loginId(user.getLoginId())
                 .authorityDtoSet(user.getAuthorities().stream()
                         .map(authority -> AuthorityDto.builder().authorityName(authority.getAuthorityName()).build())
                         .collect(Collectors.toSet()))

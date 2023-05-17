@@ -1,5 +1,6 @@
 package com.kgu.bravoHealthPark.domain.user.controller;
 
+import com.kgu.bravoHealthPark.domain.user.domain.User;
 import com.kgu.bravoHealthPark.domain.user.dto.LoginDto;
 import com.kgu.bravoHealthPark.domain.user.dto.TokenDto;
 import com.kgu.bravoHealthPark.domain.user.dto.UserDto;
@@ -41,7 +42,7 @@ public class UserController {
     public ResponseEntity<TokenDto> authorize(@Valid @RequestBody LoginDto loginDto) {
 
         UsernamePasswordAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(loginDto.getId(), loginDto.getPhoneNumber());
+                new UsernamePasswordAuthenticationToken(loginDto.getLoginId(), loginDto.getPhoneNumber());
 
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -68,4 +69,22 @@ public class UserController {
     public ResponseEntity<UserDto> getUserInfo(@RequestParam String username) {
         return ResponseEntity.ok(userService.getUserWithAuthorities(username));
     }
+
+    @GetMapping("/findUserById")
+    public ResponseEntity<UserDto> getUserById(@RequestParam Long userId){
+        User user = userService.findUserById(userId);
+        UserDto userDto = UserDto.from(user);
+        return ResponseEntity.ok(userDto);
+    }
+
+    @DeleteMapping("/{userId}")
+    public ResponseEntity<?> deleteUser(@PathVariable Long userId){
+        User user = userService.findUserById(userId);
+        userService.delete(user);
+        return ResponseEntity.ok(null);
+    }
+
+
+
+
 }
