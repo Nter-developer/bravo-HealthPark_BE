@@ -2,7 +2,7 @@ package com.kgu.bravoHealthPark.domain.medicationInfo.dto;
 
 import com.kgu.bravoHealthPark.domain.medicationInfo.domain.MedicationInfo;
 import com.kgu.bravoHealthPark.domain.state.domain.State;
-import com.kgu.bravoHealthPark.domain.type.domain.Type;
+//import com.kgu.bravoHealthPark.domain.type.domain.Type;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -10,7 +10,7 @@ import java.time.LocalDate;
 @Data
 public class MedicationInfoDto {
     private State state;
-    private Type type;
+//    private Type type;
     private String entpName;
     private String itemName;
     private int tablet; //몇 정
@@ -21,8 +21,8 @@ public class MedicationInfoDto {
 
     public MedicationInfoDto(MedicationInfo medicationInfo) {
         this.state = medicationInfo.getState();
-        this.type = medicationInfo.getType();
-        this.entpName = medicationInfo.getEntpName();
+//        this.type = medicationInfo.getType();
+//        this.entpName = medicationInfo.getEntpName();
         this.itemName = medicationInfo.getItemName();
         this.tablet = medicationInfo.getTablet();
         this.days = medicationInfo.getDays();
