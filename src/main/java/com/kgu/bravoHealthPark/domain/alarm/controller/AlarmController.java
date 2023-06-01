@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -32,26 +33,29 @@ public class AlarmController {
     @PostMapping("/create")
     public ResponseEntity<List<AlarmDto>> createAlarm(Long medicationInfoId, Meal meal, String... times) {
         MedicationInfo medicationInfo = medicationInfoService.findByMedicationInfoId(medicationInfoId);
-        int days = medicationInfo.getDays();
-
+        LocalDate startDate = medicationInfo.getStartDate();
+        LocalDate endDate = medicationInfo.getEndDate();
         List<AlarmDto> alarmDtoList = new ArrayList<>();
 
-        for (String time : times) {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
-            LocalTime localTime = LocalTime.parse(time, formatter);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
 
-            if (meal == Meal.BEFORE_MEAL)
-                localTime = localTime.minusMinutes(30);
-            else
-                localTime = localTime.plusMinutes(30);
+        for (LocalDate currentDate = startDate; !currentDate.isAfter(endDate); currentDate = currentDate.plusDays(1)) {
+            for (String time : times) {
+                LocalTime localTime = LocalTime.parse(time, formatter);
 
-            Alarm alarm = new Alarm(medicationInfo, "약 먹을 시간입니다", localTime, meal);
-            alarm.initStatus();
+                if (meal == Meal.BEFORE_MEAL) {
+                    localTime = localTime.minusMinutes(30);
+                } else {
+                    localTime = localTime.plusMinutes(30);
+                }
 
-            alarmService.save(alarm);
+                Alarm alarm = new Alarm(medicationInfo, "약 먹을 시간입니다", localTime, meal, currentDate);
+                alarm.initStatus();
+                alarmService.save(alarm);
 
-            AlarmDto alarmDto = new AlarmDto(alarm);
-            alarmDtoList.add(alarmDto);
+                AlarmDto alarmDto = new AlarmDto(alarm);
+                alarmDtoList.add(alarmDto);
+            }
         }
 
         return ResponseEntity.ok().body(alarmDtoList);

@@ -20,10 +20,7 @@ public class AlarmDto {
     private LocalTime time;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private LocalDate startDate;
-
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private LocalDate endDate;
+    private LocalDate date;
 
     @Enumerated(EnumType.STRING)
     private AlarmStatus alarmStatus;
@@ -34,8 +31,7 @@ public class AlarmDto {
     public AlarmDto(Alarm alarm) {
         this.title = alarm.getTitle();
         this.time = alarm.getTime();
-        this.startDate = alarm.getStartDate();
-        this.endDate = alarm.getEndDate();
+        this.date = alarm.getDate();
         this.alarmStatus = alarm.getAlarmStatus();
         this.meal = alarm.getMeal();
     }

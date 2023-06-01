@@ -30,10 +30,7 @@ public class Alarm {
     private LocalTime time; // 알람 시간
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private LocalDate startDate; // 알람 시작일
-
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private LocalDate endDate; // 알람 종료일
+    private LocalDate date; // 알람 시작일
 
     @Enumerated(EnumType.STRING)
     private AlarmStatus alarmStatus; // 알람 확인, 복용 상태
@@ -41,24 +38,22 @@ public class Alarm {
     @Enumerated(EnumType.STRING)
     private Meal meal; // 알람 확인, 복용 상태
 
-    public Alarm(MedicationInfo medicationInfo, String title, LocalTime time, Meal meal) {
+    public Alarm(MedicationInfo medicationInfo, String title, LocalTime time, Meal meal,LocalDate date) {
         this.medicationInfo = medicationInfo;
         this.title = title;
         this.time = time;
         this.meal = meal;
-        this.startDate = medicationInfo.getStartDate();
-        this.endDate = medicationInfo.getEndDate();
+        this.date= date;
     }
 
     public void deleteMedicationInfo() {
         this.medicationInfo = null;
     }
 
-    public void updateAlarm(String title, LocalTime time, LocalDate startDate, LocalDate endDate) {
+    public void updateAlarm(String title, LocalTime time, LocalDate date) {
         this.title = title;
         this.time = time;
-        this.startDate = startDate;
-        this.endDate = endDate;
+        this.date = date;
     }
 
     public void initStatus() {

@@ -41,7 +41,7 @@ public class AlarmService {
     //폼을 이용해서 제목, 시간, 시작일, 종료일 변경
     @Transactional
     public void updateAlarm(Alarm alarm, AlarmForm form) {
-        alarm.updateAlarm(form.getTitle(), form.getTime(), form.getStartDate(), form.getEndDate());
+        alarm.updateAlarm(form.getTitle(), form.getTime(), form.getDate());
     }
 
     //알람 확인 후 복용으로 상태 변경
