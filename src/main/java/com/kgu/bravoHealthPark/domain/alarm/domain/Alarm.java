@@ -1,7 +1,6 @@
 package com.kgu.bravoHealthPark.domain.alarm.domain;
 
 import com.kgu.bravoHealthPark.domain.medicationInfo.domain.MedicationInfo;
-import com.kgu.bravoHealthPark.domain.user.domain.User;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,7 +16,7 @@ import java.time.LocalTime;
 public class Alarm {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY  )
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "alarm_id")
     private Long alarmId;
 
@@ -39,12 +38,20 @@ public class Alarm {
     @Enumerated(EnumType.STRING)
     private AlarmStatus alarmStatus; // 알람 확인, 복용 상태
 
-    public Alarm(MedicationInfo medicationInfo, String title, LocalTime time) {
+    @Enumerated(EnumType.STRING)
+    private Meal meal; // 알람 확인, 복용 상태
+
+    public Alarm(MedicationInfo medicationInfo, String title, LocalTime time, Meal meal) {
         this.medicationInfo = medicationInfo;
         this.title = title;
         this.time = time;
+        this.meal = meal;
         this.startDate = medicationInfo.getStartDate();
         this.endDate = medicationInfo.getEndDate();
+    }
+
+    public void deleteMedicationInfo() {
+        this.medicationInfo = null;
     }
 
     public void updateAlarm(String title, LocalTime time, LocalDate startDate, LocalDate endDate) {

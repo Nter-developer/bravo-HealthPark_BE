@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalTime;
 import java.util.List;
 
 @Service
@@ -63,16 +64,6 @@ public class AlarmService {
         return findAlarm;
     }
 
-    public List<Alarm> findAlarmByTitle(String title) {
-        List<Alarm> result = alarmRepository.findByTitle(title);
-        return result;
-    }
-
-    public List<Alarm> findAlarmAll() {
-        List<Alarm> result = alarmRepository.findAll();
-        return result;
-    }
-
     public List<Alarm> findAlarmByStatus(AlarmStatus alarmStatus) {
         List<Alarm> result = alarmRepository.findByAlarmStatusIs(alarmStatus);
         return result;
@@ -88,12 +79,5 @@ public class AlarmService {
         return result;
     }
 
-    /**
-     * 검증
-     */
-
-    public boolean checkLoginId(Alarm alarm, User loginUser) {
-        return loginUser.getUserId().equals(alarm.getMedicationInfo().getUser().getUserId());
-    }
 }
 

@@ -2,13 +2,13 @@ package com.kgu.bravoHealthPark.domain.alarm.Repository;
 
 import com.kgu.bravoHealthPark.domain.alarm.domain.Alarm;
 import com.kgu.bravoHealthPark.domain.alarm.domain.AlarmStatus;
+import com.kgu.bravoHealthPark.domain.alarm.domain.Meal;
 import com.kgu.bravoHealthPark.domain.alarm.repository.AlarmRepository;
 import com.kgu.bravoHealthPark.domain.alarm.service.AlarmService;
 import com.kgu.bravoHealthPark.domain.medicationInfo.domain.MedicationInfo;
 import com.kgu.bravoHealthPark.domain.medicationInfo.dto.MedicationInfoForm;
 import com.kgu.bravoHealthPark.domain.medicationInfo.repository.MedicationInfoRepository;
 import com.kgu.bravoHealthPark.domain.medicationInfo.service.MedicationInfoService;
-import com.kgu.bravoHealthPark.domain.type.domain.Type;
 import com.kgu.bravoHealthPark.domain.user.domain.User;
 import com.kgu.bravoHealthPark.domain.user.repository.UserRepository;
 import org.junit.jupiter.api.Test;
@@ -47,7 +47,7 @@ class AlarmRepositoryTest {
         //given
         User user = User.builder()
                 .phoneNumber("010-1234-5678")
-                .id("홍길동")
+                .loginId("홍길동")
                 .build();
 
         User save = userRepository.save(user);
@@ -60,12 +60,12 @@ class AlarmRepositoryTest {
         medicationInfoForm.setTablet(1);
         medicationInfoForm.setEndDate(LocalDate.now());
 
-        MedicationInfo medicationInfo = new MedicationInfo(save, LocalDate.now(), medicationInfoForm, Type.VitaminC);
+        MedicationInfo medicationInfo = new MedicationInfo(save, LocalDate.now(), medicationInfoForm);
         medicationInfo.firstState();
         medicationInfoRepository.save(medicationInfo);
 
         //when
-        Alarm alarm = new Alarm(medicationInfo, "알람", LocalTime.of(12, 0));
+        Alarm alarm = new Alarm(medicationInfo, "알람", LocalTime.of(12, 0), Meal.BEFORE_MEAL);
         alarm.initStatus();
         Alarm saveAlarm = alarmRepository.save(alarm);
         //then
@@ -78,7 +78,7 @@ class AlarmRepositoryTest {
         //given
         User user = User.builder()
                 .phoneNumber("010-1234-5678")
-                .id("홍길동")
+                .loginId("홍길동")
                 .build();
 
         User save = userRepository.save(user);
@@ -91,10 +91,10 @@ class AlarmRepositoryTest {
         medicationInfoForm.setTablet(1);
         medicationInfoForm.setEndDate(LocalDate.now());
 
-        MedicationInfo medicationInfo = new MedicationInfo(save, LocalDate.now(), medicationInfoForm, Type.VitaminC);
+        MedicationInfo medicationInfo = new MedicationInfo(save, LocalDate.now(), medicationInfoForm);
         medicationInfoRepository.save(medicationInfo);
 
-        Alarm alarm = new Alarm(medicationInfo, "알람", LocalTime.of(12, 0));
+        Alarm alarm = new Alarm(medicationInfo, "알람", LocalTime.of(12, 0), Meal.BEFORE_MEAL);
         Alarm saveAlarm = alarmRepository.save(alarm);
 
         //when
@@ -105,16 +105,54 @@ class AlarmRepositoryTest {
     }
 
     @Test
+    public void mealTest() {
+        //given
+        User user = User.builder()
+                .phoneNumber("010-1234-5678")
+                .loginId("홍길동")
+                .build();
+
+        User save = userRepository.save(user);
+
+        MedicationInfoForm medicationInfoForm = new MedicationInfoForm();
+        medicationInfoForm.setEnptName("test");
+        medicationInfoForm.setDays(10);
+        medicationInfoForm.setItemName("test");
+        medicationInfoForm.setMemo("약");
+        medicationInfoForm.setTablet(1);
+        medicationInfoForm.setEndDate(LocalDate.now());
+
+        MedicationInfo medicationInfo1 = new MedicationInfo(save, LocalDate.now(), medicationInfoForm);
+        medicationInfoRepository.save(medicationInfo1);
+
+        MedicationInfo medicationInfo2 = new MedicationInfo(save, LocalDate.now(), medicationInfoForm);
+        medicationInfoRepository.save(medicationInfo2);
+
+
+        //when
+        Alarm alarm1 = new Alarm(medicationInfo1, "알람1", LocalTime.of(12, 0), Meal.BEFORE_MEAL);
+        alarm1.initStatus();
+        alarmRepository.save(alarm1);
+        Alarm alarm2 = new Alarm(medicationInfo2, "알람2", LocalTime.of(12, 0), Meal.AFTER_MEAL);
+        alarm2.initStatus();
+        alarmRepository.save(alarm2);
+        //then
+
+        assertThat(alarm1.getTime()).isEqualTo(LocalTime.of(11, 30));
+        assertThat(alarm2.getTime()).isEqualTo(LocalTime.of(12, 30));
+    }
+
+    @Test
     public void findAllAlarmTest() {
         //given
         User user1 = User.builder()
                 .phoneNumber("010-1234-5678")
-                .id("홍길동")
+                .loginId("홍길동")
                 .build();
 
         User user2 = User.builder()
                 .phoneNumber("010-1234-5678")
-                .id("김길동")
+                .loginId("김길동")
                 .build();
 
         User save1 = userRepository.save(user1);
@@ -128,16 +166,16 @@ class AlarmRepositoryTest {
         medicationInfoForm.setTablet(1);
         medicationInfoForm.setEndDate(LocalDate.now());
 
-        MedicationInfo medicationInfo1 = new MedicationInfo(save1, LocalDate.now(), medicationInfoForm, Type.VitaminC);
+        MedicationInfo medicationInfo1 = new MedicationInfo(save1, LocalDate.now(), medicationInfoForm);
         medicationInfoRepository.save(medicationInfo1);
 
-        MedicationInfo medicationInfo2 = new MedicationInfo(save2, LocalDate.now(), medicationInfoForm, Type.VitaminC);
+        MedicationInfo medicationInfo2 = new MedicationInfo(save2, LocalDate.now(), medicationInfoForm);
         medicationInfoRepository.save(medicationInfo2);
 
-        Alarm alarm1 = new Alarm(medicationInfo1, "알람1", LocalTime.of(12, 0));
+        Alarm alarm1 = new Alarm(medicationInfo1, "알람1", LocalTime.of(12, 0), Meal.BEFORE_MEAL);
         alarm1.initStatus();
         alarmRepository.save(alarm1);
-        Alarm alarm2 = new Alarm(medicationInfo2, "알람2", LocalTime.of(12, 0));
+        Alarm alarm2 = new Alarm(medicationInfo2, "알람2", LocalTime.of(12, 0), Meal.BEFORE_MEAL);
         alarm2.initStatus();
         alarmRepository.save(alarm2);
 
@@ -154,12 +192,12 @@ class AlarmRepositoryTest {
         //given
         User user1 = User.builder()
                 .phoneNumber("010-1234-5678")
-                .id("홍길동")
+                .loginId("홍길동")
                 .build();
 
         User user2 = User.builder()
                 .phoneNumber("010-1234-5678")
-                .id("김길동")
+                .loginId("김길동")
                 .build();
 
         User save1 = userRepository.save(user1);
@@ -173,16 +211,16 @@ class AlarmRepositoryTest {
         medicationInfoForm.setTablet(1);
         medicationInfoForm.setEndDate(LocalDate.now());
 
-        MedicationInfo medicationInfo1 = new MedicationInfo(save1, LocalDate.now(), medicationInfoForm, Type.VitaminC);
+        MedicationInfo medicationInfo1 = new MedicationInfo(save1, LocalDate.now(), medicationInfoForm);
         medicationInfoRepository.save(medicationInfo1);
 
-        MedicationInfo medicationInfo2 = new MedicationInfo(save2, LocalDate.now(), medicationInfoForm, Type.VitaminC);
+        MedicationInfo medicationInfo2 = new MedicationInfo(save2, LocalDate.now(), medicationInfoForm);
         medicationInfoRepository.save(medicationInfo2);
 
-        Alarm alarm1 = new Alarm(medicationInfo1, "알람1", LocalTime.of(12, 0));
+        Alarm alarm1 = new Alarm(medicationInfo1, "알람1", LocalTime.of(12, 0), Meal.BEFORE_MEAL);
         alarm1.initStatus();
         alarmRepository.save(alarm1);
-        Alarm alarm2 = new Alarm(medicationInfo2, "알람2", LocalTime.of(12, 0));
+        Alarm alarm2 = new Alarm(medicationInfo2, "알람2", LocalTime.of(12, 0), Meal.BEFORE_MEAL);
         alarm2.initStatus();
         alarmRepository.save(alarm2);
 
@@ -201,12 +239,12 @@ class AlarmRepositoryTest {
         //given
         User user1 = User.builder()
                 .phoneNumber("010-1234-5678")
-                .id("홍길동")
+                .loginId("홍길동")
                 .build();
 
         User user2 = User.builder()
                 .phoneNumber("010-1234-5678")
-                .id("김길동")
+                .loginId("김길동")
                 .build();
 
         User save1 = userRepository.save(user1);
@@ -220,16 +258,16 @@ class AlarmRepositoryTest {
         medicationInfoForm.setTablet(1);
         medicationInfoForm.setEndDate(LocalDate.now());
 
-        MedicationInfo medicationInfo1 = new MedicationInfo(save1, LocalDate.now(), medicationInfoForm, Type.VitaminC);
+        MedicationInfo medicationInfo1 = new MedicationInfo(save1, LocalDate.now(), medicationInfoForm);
         medicationInfoRepository.save(medicationInfo1);
 
-        MedicationInfo medicationInfo2 = new MedicationInfo(save2, LocalDate.now(), medicationInfoForm, Type.VitaminC);
+        MedicationInfo medicationInfo2 = new MedicationInfo(save2, LocalDate.now(), medicationInfoForm);
         medicationInfoRepository.save(medicationInfo2);
 
-        Alarm alarm1 = new Alarm(medicationInfo1, "알람1", LocalTime.of(12, 0));
+        Alarm alarm1 = new Alarm(medicationInfo1, "알람1", LocalTime.of(12, 0), Meal.BEFORE_MEAL);
         alarm1.initStatus();
         alarmRepository.save(alarm1);
-        Alarm alarm2 = new Alarm(medicationInfo2, "알람2", LocalTime.of(12, 0));
+        Alarm alarm2 = new Alarm(medicationInfo2, "알람2", LocalTime.of(12, 0), Meal.BEFORE_MEAL);
         alarm2.initStatus();
         alarmRepository.save(alarm2);
 
@@ -246,12 +284,12 @@ class AlarmRepositoryTest {
         //given
         User user1 = User.builder()
                 .phoneNumber("010-1234-5678")
-                .id("홍길동")
+                .loginId("홍길동")
                 .build();
 
         User user2 = User.builder()
                 .phoneNumber("010-1234-5678")
-                .id("김길동")
+                .loginId("김길동")
                 .build();
 
         User save1 = userRepository.save(user1);
@@ -265,16 +303,16 @@ class AlarmRepositoryTest {
         medicationInfoForm.setTablet(1);
         medicationInfoForm.setEndDate(LocalDate.now());
 
-        MedicationInfo medicationInfo1 = new MedicationInfo(save1, LocalDate.now(), medicationInfoForm, Type.VitaminC);
+        MedicationInfo medicationInfo1 = new MedicationInfo(save1, LocalDate.now(), medicationInfoForm);
         medicationInfoRepository.save(medicationInfo1);
 
-        MedicationInfo medicationInfo2 = new MedicationInfo(save2, LocalDate.now(), medicationInfoForm, Type.VitaminC);
+        MedicationInfo medicationInfo2 = new MedicationInfo(save2, LocalDate.now(), medicationInfoForm);
         medicationInfoRepository.save(medicationInfo2);
 
-        Alarm alarm1 = new Alarm(medicationInfo1, "알람1", LocalTime.of(12, 0));
+        Alarm alarm1 = new Alarm(medicationInfo1, "알람1", LocalTime.of(12, 0), Meal.BEFORE_MEAL);
         alarm1.initStatus();
         alarmRepository.save(alarm1);
-        Alarm alarm2 = new Alarm(medicationInfo2, "알람2", LocalTime.of(12, 0));
+        Alarm alarm2 = new Alarm(medicationInfo2, "알람2", LocalTime.of(12, 0), Meal.BEFORE_MEAL);
         alarm2.initStatus();
         alarmRepository.save(alarm2);
 
@@ -285,8 +323,8 @@ class AlarmRepositoryTest {
         //then All 조회 테스트
         assertThat(alarmByUser1.size()).isEqualTo(1);
         assertThat(alarmByUser2.size()).isEqualTo(1);
-        assertThat(alarmByUser1.get(0).getMedicationInfo().getUser().getId()).isEqualTo("홍길동");
-        assertThat(alarmByUser2.get(0).getMedicationInfo().getUser().getId()).isEqualTo("김길동");
+        assertThat(alarmByUser1.get(0).getMedicationInfo().getUser().getLoginId()).isEqualTo("홍길동");
+        assertThat(alarmByUser2.get(0).getMedicationInfo().getUser().getLoginId()).isEqualTo("김길동");
     }
 
     @Test
@@ -294,12 +332,12 @@ class AlarmRepositoryTest {
         //given
         User user1 = User.builder()
                 .phoneNumber("010-1234-5678")
-                .id("홍길동")
+                .loginId("홍길동")
                 .build();
 
         User user2 = User.builder()
                 .phoneNumber("010-1234-5678")
-                .id("김길동")
+                .loginId("김길동")
                 .build();
 
         User save1 = userRepository.save(user1);
@@ -313,16 +351,16 @@ class AlarmRepositoryTest {
         medicationInfoForm.setTablet(1);
         medicationInfoForm.setEndDate(LocalDate.now());
 
-        MedicationInfo medicationInfo1 = new MedicationInfo(save1, LocalDate.now(), medicationInfoForm, Type.VitaminC);
+        MedicationInfo medicationInfo1 = new MedicationInfo(save1, LocalDate.now(), medicationInfoForm);
         medicationInfoRepository.save(medicationInfo1);
 
-        MedicationInfo medicationInfo2 = new MedicationInfo(save2, LocalDate.now(), medicationInfoForm, Type.VitaminC);
+        MedicationInfo medicationInfo2 = new MedicationInfo(save2, LocalDate.now(), medicationInfoForm);
         medicationInfoRepository.save(medicationInfo2);
 
-        Alarm alarm1 = new Alarm(medicationInfo1, "알람1", LocalTime.of(12, 0));
+        Alarm alarm1 = new Alarm(medicationInfo1, "알람1", LocalTime.of(12, 0), Meal.BEFORE_MEAL);
         alarm1.initStatus();
         alarmRepository.save(alarm1);
-        Alarm alarm2 = new Alarm(medicationInfo2, "알람2", LocalTime.of(12, 0));
+        Alarm alarm2 = new Alarm(medicationInfo2, "알람2", LocalTime.of(12, 0), Meal.BEFORE_MEAL);
         alarm2.initStatus();
         alarmRepository.save(alarm2);
 

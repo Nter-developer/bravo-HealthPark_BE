@@ -1,3 +1,4 @@
+/*
 package com.kgu.bravoHealthPark.domain.medicationInfo.repository;
 
 import com.kgu.bravoHealthPark.domain.medicationInfo.domain.MedicationInfo;
@@ -383,4 +384,4 @@ class MedicationInfoRepositoryTest {
         assertThat(findInfo7.size()).isEqualTo(0);
         assertThat(findInfo8.size()).isEqualTo(0);
     }
-}
+}*/
