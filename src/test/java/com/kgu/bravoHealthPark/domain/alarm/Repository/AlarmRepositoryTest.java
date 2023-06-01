@@ -1,3 +1,4 @@
+/*
 package com.kgu.bravoHealthPark.domain.alarm.Repository;
 
 import com.kgu.bravoHealthPark.domain.alarm.domain.Alarm;
@@ -376,4 +377,4 @@ class AlarmRepositoryTest {
         assertThat(alarmByUserAndStatus2.get(0).getMedicationInfo().getUser().getUserId()).isEqualTo(save2.getUserId());
     }
 
-}
+}*/

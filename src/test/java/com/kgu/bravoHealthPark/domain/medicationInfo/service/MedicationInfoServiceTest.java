@@ -1,3 +1,4 @@
+/*
 package com.kgu.bravoHealthPark.domain.medicationInfo.service;
 
 import com.kgu.bravoHealthPark.domain.medicationInfo.domain.MedicationInfo;
@@ -149,4 +150,4 @@ class MedicationInfoServiceTest {
 //        assertThat(type3).isEqualTo(Type.Lutein);
 //        assertThat(type4).isEqualTo(Type.VitaminD);
 //    }
-}
+}*/

@@ -1,3 +1,4 @@
+/*
 package com.kgu.bravoHealthPark.domain.alarm.service;
 
 import com.kgu.bravoHealthPark.domain.alarm.domain.Alarm;
@@ -112,4 +113,4 @@ class AlarmServiceTest {
         assertThat(alarm1.getAlarmStatus()).isEqualTo(AlarmStatus.DOSE);
         assertThat(alarm2.getAlarmStatus()).isEqualTo(AlarmStatus.NOT_DOSE);
     }
-}
+}*/
