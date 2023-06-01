@@ -41,7 +41,7 @@ public class MedicationInfoService {
     @Transactional
     public void updateInfo(MedicationInfo medicationInfo,MedicationInfoForm medicationInfoForm){
         medicationInfo.updateInfo(medicationInfoForm.getItemName(),
-                medicationInfoForm.getTablet(),medicationInfoForm.getDays(),medicationInfoForm.getEndDate(),medicationInfoForm.getMemo());
+                medicationInfoForm.getTablet(),medicationInfoForm.getTimes(),medicationInfoForm.getDays(),medicationInfoForm.getMemo());
     }
 
     // 복용상태 바꾸는거
@@ -50,12 +50,7 @@ public class MedicationInfoService {
         medicationInfo.changeState();
     }
 
-//    @Transactional
-//    public void updateType(MedicationInfo medicationInfo, Type type){
-//        medicationInfo.updateType(type);
-//    }
-
-//    public List<MedicationInfo> findByType(Long userId,Type type){
-//        return medicationInfoRepository.findMedicationInfoByUser_UserIdAndTypeIs(userId,type);
-//    }
+    public List<MedicationInfo> findByItemNameAndUserId(String itemName,Long userId){
+        return medicationInfoRepository.findMedicationInfoByItemNameAndUser_UserId(itemName,userId);
+    }
 }
