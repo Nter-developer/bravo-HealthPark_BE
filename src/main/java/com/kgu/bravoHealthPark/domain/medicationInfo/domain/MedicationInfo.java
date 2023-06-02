@@ -1,10 +1,7 @@
 package com.kgu.bravoHealthPark.domain.medicationInfo.domain;
 
 import com.kgu.bravoHealthPark.domain.state.domain.State;
-import com.kgu.bravoHealthPark.domain.type.domain.Type;
 import com.kgu.bravoHealthPark.domain.user.domain.User;
-import com.kgu.bravoHealthPark.domain.medicationInfo.dto.MedicationInfoForm;
-
 import com.kgu.bravoHealthPark.domain.medicationInfo.dto.MedicationInfoForm;
 
 import lombok.AccessLevel;
@@ -29,14 +26,12 @@ public class MedicationInfo {
     private User user;
 
     @Enumerated(EnumType.STRING)
-    private Type type;
-
-    @Enumerated(EnumType.STRING)
     private State state;
 
-    private String entpName;
     private String itemName;
-    private int tablet; //몇 정
+    private int tablet; //1회 투약량
+
+    private int times; //1회 투여횟수
     private int days;
     private LocalDate startDate;
     private LocalDate endDate;
@@ -59,28 +54,35 @@ public class MedicationInfo {
             this.state=State.DOING;
     }
 
-    public void updateInfo(String entpName,String itemName,int tablet,int days,LocalDate endDate,String memo){
+    public void updateInfo(String itemName,int tablet,int times,int days,String memo){
         this.startDate=LocalDate.now();
-        this.entpName=entpName;
         this.days=days;
+        this.times=times;
         this.itemName=itemName;
+        this.endDate = startDate.plusDays(days);
         this.tablet=tablet;
-        this.endDate=endDate;
         this.memo =memo;
     }
-    public void updateType(Type type) {
-        this.type = type;
-    }
 
-    public MedicationInfo(User user, LocalDate startDate,MedicationInfoForm medicationInfoForm,Type type) {
+    public MedicationInfo(User user, LocalDate startDate,MedicationInfoForm medicationInfoForm) {
         this.user = user;
-        this.type = type;
-        this.entpName = medicationInfoForm.getEnptName();
         this.itemName = medicationInfoForm.getItemName();
+        this.times=medicationInfoForm.getTimes();
         this.tablet = medicationInfoForm.getTablet();
         this.days = medicationInfoForm.getDays();
         this.startDate = startDate;
-        this.endDate = medicationInfoForm.getEndDate();
+        this.endDate = startDate.plusDays(days);
         this.memo = medicationInfoForm.getMemo();
+    }
+
+    public MedicationInfo(User user, LocalDate startDate, String itemName,int times,int tablet,int days,String memo){
+        this.user=user;
+        this.startDate=startDate;
+        this.endDate=startDate.plusDays(days);
+        this.itemName=itemName;
+        this.times=times;
+        this.tablet=tablet;
+        this.days=days;
+        this.memo=memo;
     }
 }
