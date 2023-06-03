@@ -11,6 +11,7 @@ import com.kgu.bravoHealthPark.domain.medicationInfo.service.MedicationInfoServi
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,6 +23,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Api(tags = {"Alarm Api"}, description = "알람 관련 Api (#8)")
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/alarm")
@@ -30,8 +32,8 @@ public class AlarmController {
     private final MedicationInfoService medicationInfoService;
 
     @ApiOperation(value = "알람 생성")
-    @PostMapping("/create")
-    public ResponseEntity<List<AlarmDto>> createAlarm(Long medicationInfoId, Meal meal, String... times) {
+    @PostMapping("/{medicationInfoId}")
+    public ResponseEntity<List<AlarmDto>> createAlarm(@PathVariable Long medicationInfoId, Meal meal, String... times) {
         MedicationInfo medicationInfo = medicationInfoService.findByMedicationInfoId(medicationInfoId);
         LocalDate startDate = medicationInfo.getStartDate();
         LocalDate endDate = medicationInfo.getEndDate();
@@ -62,7 +64,7 @@ public class AlarmController {
     }
 
     @ApiOperation(value = "알람 삭제")
-    @DeleteMapping("/delete/{alarmId}")
+    @DeleteMapping("/{alarmId}")
     public ResponseEntity<AlarmDto> deleteAlarm(@PathVariable Long alarmId) {
         Alarm findAlarm = alarmService.findAlarmById(alarmId);
 
@@ -88,7 +90,7 @@ public class AlarmController {
     }
 
     @ApiOperation(value = "알람 확인후 복용 상태 변경")
-    @PatchMapping("/update/alarmstatus/dose/{alarmId}")
+    @PatchMapping("/update/dose/{alarmId}")
     public ResponseEntity<AlarmDto> updateAlarmStatusDose(@PathVariable Long alarmId) {
         Alarm findAlarm = alarmService.findAlarmById(alarmId);
         alarmService.changeAlarmDose(findAlarm);
@@ -99,7 +101,7 @@ public class AlarmController {
     }
 
     @ApiOperation(value = "알람 확인후 복용하지 않음 상태로 변경")
-    @PatchMapping("/update/alarmstatus/notdose/{alarmId}")
+    @PatchMapping("/update/notdose/{alarmId}")
     public ResponseEntity<AlarmDto> updateUncheck(@PathVariable Long alarmId) {
         Alarm findAlarm = alarmService.findAlarmById(alarmId);
         alarmService.changeAlarmNotDose(findAlarm);
@@ -110,7 +112,7 @@ public class AlarmController {
     }
 
     @ApiOperation(value = "알람 Id로 찾기")
-    @GetMapping("/search/alarm/{alarmId}")
+    @GetMapping("/{alarmId}")
     public ResponseEntity<AlarmDto> searchAlarmById(@PathVariable Long alarmId) {
         Alarm findAlarm = alarmService.findAlarmById(alarmId);
 
@@ -120,9 +122,13 @@ public class AlarmController {
     }
 
     @ApiOperation(value = "유저별 알람 찾기")
-    @GetMapping("/search/user/{userId}")
+    @GetMapping("/{userId}")
     public ResponseEntity<List<AlarmDto>> searchAlarmByUser(@PathVariable Long userId) {
         List<Alarm> alarmList = alarmService.findAlarmByUser(userId);
+
+        if (alarmList.isEmpty()) {
+            log.debug("정보가 없습니다.");
+        }
 
         List<AlarmDto> result = alarmList.stream()
                 .map(a -> new AlarmDto(a))
@@ -132,10 +138,13 @@ public class AlarmController {
     }
 
     @ApiOperation(value = "알람 상태로 알람 찾기")
-    @GetMapping("/search/status")
-    public ResponseEntity<List<AlarmDto>> searchAlarmByStatus(@RequestParam AlarmStatus alarmStatus) {
+    @GetMapping("/status")
+    public ResponseEntity<List<AlarmDto>> searchAlarmByStatus(AlarmStatus alarmStatus) {
         List<Alarm> alarmList = alarmService.findAlarmByStatus(alarmStatus);
 
+        if (alarmList.isEmpty()) {
+            log.debug("정보가 없습니다.");
+        }
         List<AlarmDto> result = alarmList.stream()
                 .map(a -> new AlarmDto(a))
                 .collect(Collectors.toList());
@@ -144,9 +153,13 @@ public class AlarmController {
     }
 
     @ApiOperation(value = "유저별 알람 상태에 따라알람 찾기")
-    @GetMapping("/search/user/status/{userId}")
-    public ResponseEntity<List<AlarmDto>> searchAlarmByUserAndStatus(@PathVariable Long userId, @RequestParam AlarmStatus alarmStatus) {
+    @GetMapping("/status/{userId}")
+    public ResponseEntity<List<AlarmDto>> searchAlarmByUserAndStatus(@PathVariable Long userId, AlarmStatus alarmStatus) {
         List<Alarm> alarmList = alarmService.findAlarmByUserAndStatus(userId, alarmStatus);
+
+        if (alarmList.isEmpty()) {
+            log.debug("정보가 없습니다.");
+        }
 
         List<AlarmDto> result = alarmList.stream()
                 .map(a -> new AlarmDto(a))

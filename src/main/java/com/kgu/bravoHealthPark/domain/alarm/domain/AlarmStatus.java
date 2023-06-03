@@ -1,10 +1,10 @@
 package com.kgu.bravoHealthPark.domain.alarm.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-@JsonFormat(shape = JsonFormat.Shape.OBJECT)
 @Getter
 @AllArgsConstructor
 public enum AlarmStatus {
@@ -13,6 +13,7 @@ public enum AlarmStatus {
     NOT_DOSE("확인하고 복용하지 않음"),
     DOSE("확인하고 복용함");
 
+    @JsonValue
     private final String name;
 }
 

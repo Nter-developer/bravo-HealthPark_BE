@@ -39,4 +39,9 @@ public class Calendar {
         this.day = day;
     }
 
+    public void deleteAlarm() {
+        this.alarm = null;
+        this.alarmStatus = null;
+    }
+
 }
