@@ -13,7 +13,5 @@ public class AlarmForm {
     @DateTimeFormat(pattern = "HH:mm")
     private LocalTime time; // 알람 시간
 
-    private LocalDate startDate; // 알람 시작일
-
-    private LocalDate endDate; // 알람 종료일
+    private LocalDate date; // 알람 날짜
 }

@@ -1,19 +1,17 @@
 package com.kgu.bravoHealthPark.domain.alarm.domain;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum AlarmStatus {
+public enum Meal {
 
-    NOT_CONFIRMED("확인되지 않음"),
-    NOT_DOSE("확인하고 복용하지 않음"),
-    DOSE("확인하고 복용함");
+    BEFORE_MEAL("식전"),
+    AFTER_MEAL("식후");
 
-    @JsonValue
+    @JsonValue // enum 타입 둘중에 하나 선택할 수 있게 설정
     private final String name;
 }
 

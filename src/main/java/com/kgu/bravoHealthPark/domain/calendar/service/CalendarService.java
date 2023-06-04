@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class CalendarService {
     private final CalendarRepository calendarRepository;
@@ -20,6 +20,7 @@ public class CalendarService {
     /**
      * 생성
      */
+    @Transactional
     public Calendar save(Calendar calendar) {
         calendarRepository.save(calendar);
         return calendar;
@@ -28,6 +29,7 @@ public class CalendarService {
     /**
      * 삭제
      */
+    @Transactional
     public void delete(Calendar calendar) {
         calendarRepository.delete(calendar);
     }
@@ -40,8 +42,8 @@ public class CalendarService {
         return findCalendar;
     }
 
-    public List<Calendar> findCalendarAll() {
-        List<Calendar> all = calendarRepository.findAll();
+    public List<Calendar> findCalendarAllByUser(Long userId) {
+        List<Calendar> all = calendarRepository.findAllByAlarm_MedicationInfo_User_UserId(userId);
         return all;
     }
 
