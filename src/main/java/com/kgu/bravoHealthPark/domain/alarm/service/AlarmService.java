@@ -4,6 +4,8 @@ import com.kgu.bravoHealthPark.domain.alarm.domain.Alarm;
 import com.kgu.bravoHealthPark.domain.alarm.domain.AlarmStatus;
 import com.kgu.bravoHealthPark.domain.alarm.dto.AlarmForm;
 import com.kgu.bravoHealthPark.domain.alarm.repository.AlarmRepository;
+import com.kgu.bravoHealthPark.domain.calendar.domain.Calendar;
+import com.kgu.bravoHealthPark.domain.calendar.service.CalendarService;
 import com.kgu.bravoHealthPark.domain.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,6 +19,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AlarmService {
     private final AlarmRepository alarmRepository;
+    private final CalendarService calendarService;
 
     /**
      * 생성
@@ -48,12 +51,20 @@ public class AlarmService {
     @Transactional
     public void changeAlarmDose(Alarm alarm) {
         alarm.changeAlarmStatus(AlarmStatus.DOSE);
+        Calendar calendar = calendarService.findCalendarByAlarmId(alarm.getAlarmId());
+        if (calendar != null) {
+            calendar.changeAlarmStatus(AlarmStatus.DOSE);
+        }
     }
 
     //알람 확인 후 복용하지 않음으로 상태 변경
     @Transactional
     public void changeAlarmNotDose(Alarm alarm) {
         alarm.changeAlarmStatus(AlarmStatus.NOT_DOSE);
+        Calendar calendar = calendarService.findCalendarByAlarmId(alarm.getAlarmId());
+        if (calendar != null) {
+            calendar.changeAlarmStatus(AlarmStatus.NOT_DOSE);
+        }
     }
 
     /**
