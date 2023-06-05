@@ -32,31 +32,35 @@ public class AlarmController {
     private final MedicationInfoService medicationInfoService;
 
     @ApiOperation(value = "알람 생성")
-    @PostMapping("/{medicationInfoId}")
-    public ResponseEntity<List<AlarmDto>> createAlarm(@PathVariable Long medicationInfoId, Meal meal, String... times) {
-        MedicationInfo medicationInfo = medicationInfoService.findByMedicationInfoId(medicationInfoId);
-        LocalDate startDate = medicationInfo.getStartDate();
-        LocalDate endDate = medicationInfo.getEndDate();
+    @PostMapping("/{userId}")
+    public ResponseEntity<List<AlarmDto>> createAlarm(@PathVariable Long userId, Meal meal, String... times) {
+        List<MedicationInfo> medicationInfoList = medicationInfoService.findAllByUserId(userId);
         List<AlarmDto> alarmDtoList = new ArrayList<>();
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+        for (MedicationInfo medicationInfo : medicationInfoList) {
+            LocalDate startDate = medicationInfo.getStartDate();
+            LocalDate endDate = medicationInfo.getEndDate();
 
-        for (LocalDate currentDate = startDate; !currentDate.isAfter(endDate); currentDate = currentDate.plusDays(1)) {
-            for (String time : times) {
-                LocalTime localTime = LocalTime.parse(time, formatter);
 
-                if (meal == Meal.BEFORE_MEAL) {
-                    localTime = localTime.minusMinutes(30);
-                } else {
-                    localTime = localTime.plusMinutes(30);
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+
+            for (LocalDate currentDate = startDate; !currentDate.isAfter(endDate); currentDate = currentDate.plusDays(1)) {
+                for (String time : times) {
+                    LocalTime localTime = LocalTime.parse(time, formatter);
+
+                    if (meal == Meal.BEFORE_MEAL) {
+                        localTime = localTime.minusMinutes(30);
+                    } else if (meal == Meal.AFTER_MEAL){
+                        localTime = localTime.plusMinutes(30);
+                    }
+
+                    Alarm alarm = new Alarm(medicationInfo, medicationInfo.getMemo() + " 먹을 시간입니다", localTime, meal, currentDate);
+                    alarm.initStatus();
+                    alarmService.save(alarm);
+
+                    AlarmDto alarmDto = new AlarmDto(alarm);
+                    alarmDtoList.add(alarmDto);
                 }
-
-                Alarm alarm = new Alarm(medicationInfo, "약 먹을 시간입니다", localTime, meal, currentDate);
-                alarm.initStatus();
-                alarmService.save(alarm);
-
-                AlarmDto alarmDto = new AlarmDto(alarm);
-                alarmDtoList.add(alarmDto);
             }
         }
 
