@@ -8,6 +8,7 @@ import java.time.LocalDate;
 
 @Data
 public class MedicationInfoDto {
+    private Long medicationInfoId;
     private State state;
     private String itemName;
     private int tablet; //몇 정
@@ -18,6 +19,7 @@ public class MedicationInfoDto {
     private int times;
 
     public MedicationInfoDto(MedicationInfo medicationInfo) {
+        this.medicationInfoId=medicationInfo.getMedInfoId();
         this.state = medicationInfo.getState();
         this.itemName = medicationInfo.getItemName();
         this.tablet = medicationInfo.getTablet();
