@@ -42,6 +42,11 @@ public class CalendarService {
         return findCalendar;
     }
 
+    public Calendar findCalendarByAlarmId(Long alarmId) {
+        Calendar findCalendar = calendarRepository.findByAlarm_AlarmId(alarmId);
+        return findCalendar;
+    }
+
     public List<Calendar> findCalendarAllByUser(Long userId) {
         List<Calendar> all = calendarRepository.findAllByAlarm_MedicationInfo_User_UserId(userId);
         return all;
