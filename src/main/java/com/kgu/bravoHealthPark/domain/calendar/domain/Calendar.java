@@ -44,4 +44,8 @@ public class Calendar {
         this.alarmStatus = null;
     }
 
+    public void changeAlarmStatus(AlarmStatus alarmStatus) {
+        this.alarmStatus = alarmStatus;
+    }
+
 }
