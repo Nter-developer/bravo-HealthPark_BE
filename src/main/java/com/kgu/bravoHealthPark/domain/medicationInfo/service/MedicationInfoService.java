@@ -29,8 +29,8 @@ public class MedicationInfoService {
         return medicationInfoRepository.findMedicationInfoByMedInfoId(medicationInfoId);
     }
 
-    public List<MedicationInfo> findAllByUserId(Long userId){
-        return medicationInfoRepository.findAllByUser_UserId(userId);
+    public List<MedicationInfo> findAllByLoginId(String loginId){
+        return medicationInfoRepository.findAllByUser_LoginId(loginId);
     }
 
     //복용상태로 받는거

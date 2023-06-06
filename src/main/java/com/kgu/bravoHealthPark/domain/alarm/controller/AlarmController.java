@@ -32,9 +32,9 @@ public class AlarmController {
     private final MedicationInfoService medicationInfoService;
 
     @ApiOperation(value = "알람 생성")
-    @PostMapping("/{userId}")
-    public ResponseEntity<List<AlarmDto>> createAlarm(@PathVariable Long userId, Meal meal, String... times) {
-        List<MedicationInfo> medicationInfoList = medicationInfoService.findAllByUserId(userId);
+    @PostMapping("/{loginId}")
+    public ResponseEntity<List<AlarmDto>> createAlarm(@PathVariable String loginId, Meal meal, String... times) {
+        List<MedicationInfo> medicationInfoList = medicationInfoService.findAllByLoginId(loginId);
         List<AlarmDto> alarmDtoList = new ArrayList<>();
 
         for (MedicationInfo medicationInfo : medicationInfoList) {
@@ -126,9 +126,9 @@ public class AlarmController {
     }
 
     @ApiOperation(value = "유저별 알람 찾기")
-    @GetMapping("/{userId}")
-    public ResponseEntity<List<AlarmDto>> searchAlarmByUser(@PathVariable Long userId) {
-        List<Alarm> alarmList = alarmService.findAlarmByUser(userId);
+    @GetMapping("/{loginId}")
+    public ResponseEntity<List<AlarmDto>> searchAlarmByUser(@PathVariable String loginId) {
+        List<Alarm> alarmList = alarmService.findAlarmByLoginId(loginId);
 
         if (alarmList.isEmpty()) {
             log.debug("정보가 없습니다.");

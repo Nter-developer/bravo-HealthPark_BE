@@ -9,7 +9,7 @@ import java.util.List;
 public interface MedicationInfoRepository extends JpaRepository<MedicationInfo,Long> {
 
     MedicationInfo findMedicationInfoByMedInfoId(Long medicationInfoId);
-    List<MedicationInfo> findAllByUser_UserId(Long userId);
+    List<MedicationInfo> findAllByUser_LoginId(String loginId);
     List<MedicationInfo> findMedicationInfoByUser_UserIdAndStateIs(Long userId,State state);
 
     List<MedicationInfo> findMedicationInfoByItemNameAndUser_UserId(String itemName,Long userId);

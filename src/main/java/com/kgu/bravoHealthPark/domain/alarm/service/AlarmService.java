@@ -69,8 +69,8 @@ public class AlarmService {
         return result;
     }
 
-    public List<Alarm> findAlarmByUser(Long userId) {
-        List<Alarm> result = alarmRepository.findByMedicationInfo_User_UserId(userId);
+    public List<Alarm> findAlarmByLoginId(String loginId) {
+        List<Alarm> result = alarmRepository.findByMedicationInfo_User_LoginId(loginId);
         return result;
     }
 
