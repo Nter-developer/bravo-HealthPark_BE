@@ -10,7 +10,7 @@ public interface MedicationInfoRepository extends JpaRepository<MedicationInfo,L
 
     MedicationInfo findMedicationInfoByMedInfoId(Long medicationInfoId);
     List<MedicationInfo> findAllByUser_LoginId(String loginId);
-    List<MedicationInfo> findMedicationInfoByUser_UserIdAndStateIs(Long userId,State state);
+    List<MedicationInfo> findMedicationInfoByUser_LoginIdAndStateIs(String userId,State state);
 
-    List<MedicationInfo> findMedicationInfoByItemNameAndUser_UserId(String itemName,Long userId);
+    List<MedicationInfo> findMedicationInfoByItemNameAndUser_LoginId(String itemName,String loginId);
 }

@@ -34,8 +34,8 @@ public class MedicationInfoService {
     }
 
     //복용상태로 받는거
-    public List<MedicationInfo> findByState(Long userId,State state){
-        return medicationInfoRepository.findMedicationInfoByUser_UserIdAndStateIs(userId,state);
+    public List<MedicationInfo> findByState(String loginId,State state){
+        return medicationInfoRepository.findMedicationInfoByUser_LoginIdAndStateIs(loginId,state);
     }
 
     @Transactional
@@ -50,7 +50,7 @@ public class MedicationInfoService {
         medicationInfo.changeState();
     }
 
-    public List<MedicationInfo> findByItemNameAndUserId(String itemName,Long userId){
-        return medicationInfoRepository.findMedicationInfoByItemNameAndUser_UserId(itemName,userId);
+    public List<MedicationInfo> findByItemNameAndLoginId(String itemName,String loginId){
+        return medicationInfoRepository.findMedicationInfoByItemNameAndUser_LoginId(itemName,loginId);
     }
 }
