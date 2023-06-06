@@ -26,9 +26,9 @@ public class CalendarController {
     private final CalendarService calendarService;
 
     @ApiOperation(value = "캘린더 생성")
-    @PostMapping("/{userId}")
-    public ResponseEntity<List<CalendarDto>> createCalendar(@PathVariable Long userId) {
-        List<Alarm> alarmList = alarmService.findAlarmByUser(userId);
+    @PostMapping("/{loginId}")
+    public ResponseEntity<List<CalendarDto>> createCalendar(@PathVariable String loginId) {
+        List<Alarm> alarmList = alarmService.findAlarmByLoginId(loginId);
 
         ArrayList<CalendarDto> calendarDtos = new ArrayList<>();
 

@@ -6,12 +6,10 @@ import com.kgu.bravoHealthPark.domain.alarm.dto.AlarmForm;
 import com.kgu.bravoHealthPark.domain.alarm.repository.AlarmRepository;
 import com.kgu.bravoHealthPark.domain.calendar.domain.Calendar;
 import com.kgu.bravoHealthPark.domain.calendar.service.CalendarService;
-import com.kgu.bravoHealthPark.domain.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalTime;
 import java.util.List;
 
 @Service
@@ -80,8 +78,8 @@ public class AlarmService {
         return result;
     }
 
-    public List<Alarm> findAlarmByUser(Long userId) {
-        List<Alarm> result = alarmRepository.findByMedicationInfo_User_UserId(userId);
+    public List<Alarm> findAlarmByLoginId(String loginId) {
+        List<Alarm> result = alarmRepository.findByMedicationInfo_User_LoginId(loginId);
         return result;
     }
 
@@ -89,6 +87,7 @@ public class AlarmService {
         List<Alarm> result = alarmRepository.findByMedicationInfo_User_UserIdAndAlarmStatus(userId, alarmStatus);
         return result;
     }
+
 
 }
 
