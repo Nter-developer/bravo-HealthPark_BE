@@ -8,7 +8,6 @@ import java.util.List;
 
 public interface CalendarRepository extends JpaRepository<Calendar, Long> {
     Calendar findByCalendarId(Long calendarId);
-
     Calendar findByAlarm_AlarmId(Long alarmId);
     List<Calendar> findAllByAlarm_MedicationInfo_User_UserId(Long userId);
     List<Calendar> findByAlarmStatusIs(AlarmStatus alarmStatus);
