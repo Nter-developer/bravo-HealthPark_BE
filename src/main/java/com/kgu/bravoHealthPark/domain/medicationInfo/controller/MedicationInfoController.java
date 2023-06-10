@@ -26,6 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.time.LocalDate;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -103,7 +104,7 @@ public class MedicationInfoController {
     }
 
     @PostMapping("/image/{userId}")
-    public String sendImageToPython(@RequestPart MultipartFile imageFile,@PathVariable Long userId,String memo) throws Exception {
+    public List<MedicationInfoDto> sendImageToPython(@RequestPart MultipartFile imageFile,@PathVariable Long userId,String memo) throws Exception {
         // Python 서버 URL 설정
         String pythonUrl = "http://127.0.0.1:5000/ocr";
 
@@ -130,14 +131,14 @@ public class MedicationInfoController {
         HttpEntity responseEntity = response.getEntity();
         String responseContent = EntityUtils.toString(responseEntity);
         User user = userService.findUserById(userId);
-        processOcrResult(responseContent,user,memo);
 
-        return responseContent;
+        return processOcrResult(responseContent, user, memo);
     }
 
-    public void processOcrResult(String json, User user,String memo) throws JsonProcessingException {
+    public List<MedicationInfoDto> processOcrResult(String json, User user,String memo) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonResponse = objectMapper.readTree(json);
+        ArrayList<MedicationInfo> medicationInfos = new ArrayList<>();
 
         if (jsonResponse.isArray()) {
             for (JsonNode objectNode : jsonResponse) {
@@ -149,8 +150,13 @@ public class MedicationInfoController {
                 MedicationInfo medicationInfo = new MedicationInfo(user, LocalDate.now(), name,times,tablet,days, memo);
                 medicationInfo.firstState();
                 medicationInfoService.save(medicationInfo);
+                medicationInfos.add(medicationInfo);
             }
         }
+
+        return medicationInfos.stream()
+                .map(MedicationInfoDto::new)
+                .collect(Collectors.toList());
     }
 
     @ApiOperation("복용중인 약정보 받기")
