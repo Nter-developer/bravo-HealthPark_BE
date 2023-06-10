@@ -38,12 +38,12 @@ public class MedicationInfoController {
     private final MedicationInfoService medicationInfoService;
     private final UserService userService;
 
-    @PostMapping("/{userId}")
+    @PostMapping("/{loginId}")
     public ResponseEntity<MedicationInfoDto> save(
-            @PathVariable Long userId,
+            @PathVariable String loginId,
             @RequestBody MedicationInfoForm medicationInfoForm){
 
-        User user = userService.findUserById(userId);
+        User user = userService.findUserByLoginId(loginId);
         MedicationInfo medicationInfo = new MedicationInfo(user, LocalDate.now(),medicationInfoForm);
         medicationInfo.firstState();
         MedicationInfo saveMedicationInfo = medicationInfoService.save(medicationInfo);
@@ -70,8 +70,8 @@ public class MedicationInfoController {
 
     @ApiOperation("모든 medication Info정보 받기")
     @GetMapping("/all")
-    public ResponseEntity<List<MedicationInfoDto>> allMedicationInfo(@RequestParam Long userId){
-        List<MedicationInfo> medicationInfos = medicationInfoService.findAllByUserId(userId);
+    public ResponseEntity<List<MedicationInfoDto>> allMedicationInfo(@RequestParam String loginId){
+        List<MedicationInfo> medicationInfos = medicationInfoService.findAllByLoginId(loginId);
 
         List<MedicationInfoDto> medicationInfoDtos = medicationInfos.stream()
                 .map(MedicationInfoDto::new)
@@ -103,8 +103,8 @@ public class MedicationInfoController {
         return ResponseEntity.ok().body(medicationInfoDto);
     }
 
-    @PostMapping("/image/{userId}")
-    public List<MedicationInfoDto> sendImageToPython(@RequestPart MultipartFile imageFile,@PathVariable Long userId,String memo) throws Exception {
+    @PostMapping("/image/{loginId}")
+    public List<MedicationInfoDto> sendImageToPython(@RequestPart MultipartFile imageFile,@PathVariable String loginId,String memo) throws Exception {
         // Python 서버 URL 설정
         String pythonUrl = "http://127.0.0.1:5000/ocr";
 
@@ -130,7 +130,7 @@ public class MedicationInfoController {
         HttpResponse response = httpClient.execute(httpPost);
         HttpEntity responseEntity = response.getEntity();
         String responseContent = EntityUtils.toString(responseEntity);
-        User user = userService.findUserById(userId);
+        User user = userService.findUserByLoginId(loginId);
 
         return processOcrResult(responseContent, user, memo);
     }
@@ -161,8 +161,8 @@ public class MedicationInfoController {
 
     @ApiOperation("복용중인 약정보 받기")
     @GetMapping("/Doing")
-    public ResponseEntity<List<MedicationInfoDto>> getInfoByDoing(@RequestParam Long userId){
-        List<MedicationInfo> medicationInfos = medicationInfoService.findByState(userId, State.DOING);
+    public ResponseEntity<List<MedicationInfoDto>> getInfoByDoing(@RequestParam String loginId){
+        List<MedicationInfo> medicationInfos = medicationInfoService.findByState(loginId, State.DOING);
         List<MedicationInfoDto> medicationInfoDtos = medicationInfos.stream()
                 .map(MedicationInfoDto::new)
                 .collect(Collectors.toList());
@@ -172,8 +172,8 @@ public class MedicationInfoController {
 
     @ApiOperation("복용완료한 약정보 받기")
     @GetMapping("/Finished")
-    public ResponseEntity<List<MedicationInfoDto>> getInfoByFinished(@RequestParam Long userId){
-        List<MedicationInfo> medicationInfos = medicationInfoService.findByState(userId, State.FINISHED);
+    public ResponseEntity<List<MedicationInfoDto>> getInfoByFinished(@RequestParam String loginId){
+        List<MedicationInfo> medicationInfos = medicationInfoService.findByState(loginId, State.FINISHED);
         List<MedicationInfoDto> medicationInfoDtos = medicationInfos.stream()
                 .map(MedicationInfoDto::new)
                 .collect(Collectors.toList());
@@ -183,8 +183,8 @@ public class MedicationInfoController {
 
     @ApiOperation("약이름으로 정보 받기")
     @GetMapping("/item")
-    public ResponseEntity<List<MedicationInfoDto>> getInfoByItemName(@RequestParam String itemName,@RequestParam Long userId){
-        List<MedicationInfo> medicationInfoList = medicationInfoService.findByItemNameAndUserId(itemName,userId);
+    public ResponseEntity<List<MedicationInfoDto>> getInfoByItemName(@RequestParam String itemName,@RequestParam String loginId){
+        List<MedicationInfo> medicationInfoList = medicationInfoService.findByItemNameAndLoginId(itemName,loginId);
         List<MedicationInfoDto> medicationInfoDtos = medicationInfoList.stream()
                 .map(MedicationInfoDto::new)
                 .collect(Collectors.toList());
