@@ -132,6 +132,7 @@ public class MedicationInfoController {
         String responseContent = EntityUtils.toString(responseEntity);
         User user = userService.findUserByLoginId(loginId);
 
+
         return processOcrResult(responseContent, user, memo);
     }
 
@@ -153,7 +154,6 @@ public class MedicationInfoController {
                 medicationInfos.add(medicationInfo);
             }
         }
-
 
         return medicationInfos.stream()
                 .map(MedicationInfoDto::new)
