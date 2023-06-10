@@ -154,6 +154,7 @@ public class MedicationInfoController {
             }
         }
 
+
         return medicationInfos.stream()
                 .map(MedicationInfoDto::new)
                 .collect(Collectors.toList());
