@@ -103,9 +103,8 @@ public class MedicationInfoController {
         return ResponseEntity.ok().body(medicationInfoDto);
     }
 
-
-    @PostMapping("/image/{userId}")
-    public List<MedicationInfoDto> sendImageToPython(@RequestPart MultipartFile imageFile,@PathVariable Long userId,String memo) throws Exception {
+    @PostMapping("/image/{loginId}")
+    public List<MedicationInfoDto> sendImageToPython(@RequestPart MultipartFile imageFile,@PathVariable String loginId,String memo) throws Exception {
         // Python 서버 URL 설정
         String pythonUrl = "http://127.0.0.1:5000/ocr";
 
@@ -131,7 +130,8 @@ public class MedicationInfoController {
         HttpResponse response = httpClient.execute(httpPost);
         HttpEntity responseEntity = response.getEntity();
         String responseContent = EntityUtils.toString(responseEntity);
-        User user = userService.findUserById(userId);
+        User user = userService.findUserByLoginId(loginId);
+
 
         return processOcrResult(responseContent, user, memo);
     }
