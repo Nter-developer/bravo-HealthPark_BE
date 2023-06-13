@@ -14,6 +14,7 @@ import java.time.LocalTime;
 @Data
 public class AlarmDto {
 
+    private Long alarmId;
     private String title;
 
     @DateTimeFormat(pattern = "HH:mm")
@@ -29,6 +30,7 @@ public class AlarmDto {
     private Meal meal; // 알람 확인, 복용 상태
 
     public AlarmDto(Alarm alarm) {
+        this.alarmId=alarm.getAlarmId();
         this.title = alarm.getTitle();
         this.time = alarm.getTime();
         this.date = alarm.getDate();
