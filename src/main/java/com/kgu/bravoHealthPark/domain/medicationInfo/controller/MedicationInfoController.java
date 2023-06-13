@@ -3,6 +3,10 @@ package com.kgu.bravoHealthPark.domain.medicationInfo.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kgu.bravoHealthPark.domain.alarm.domain.Alarm;
+import com.kgu.bravoHealthPark.domain.alarm.domain.Meal;
+import com.kgu.bravoHealthPark.domain.alarm.dto.AlarmDto;
+import com.kgu.bravoHealthPark.domain.alarm.service.AlarmService;
 import com.kgu.bravoHealthPark.domain.medicationInfo.domain.MedicationInfo;
 import com.kgu.bravoHealthPark.domain.medicationInfo.dto.MedicationInfoDto;
 import com.kgu.bravoHealthPark.domain.state.domain.State;
@@ -26,6 +30,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.time.LocalDate;
 
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -37,19 +43,46 @@ public class MedicationInfoController {
 
     private final MedicationInfoService medicationInfoService;
     private final UserService userService;
+    private final AlarmService alarmService;
 
     @PostMapping("/{loginId}")
-    public ResponseEntity<MedicationInfoDto> save(
+    public ResponseEntity<List<AlarmDto>> save(
             @PathVariable String loginId,
-            @RequestBody MedicationInfoForm medicationInfoForm){
+            @RequestBody MedicationInfoForm medicationInfoForm,
+            Meal meal, String... time) {
 
         User user = userService.findUserByLoginId(loginId);
-        MedicationInfo medicationInfo = new MedicationInfo(user, LocalDate.now(),medicationInfoForm);
+        MedicationInfo medicationInfo = new MedicationInfo(user, LocalDate.now(), medicationInfoForm);
         medicationInfo.firstState();
         MedicationInfo saveMedicationInfo = medicationInfoService.save(medicationInfo);
 
-        MedicationInfoDto medicationInfoDto = new MedicationInfoDto(saveMedicationInfo);
-        return ResponseEntity.ok().body(medicationInfoDto);
+        List<AlarmDto> alarmDtoList = new ArrayList<>();
+        LocalDate startDate = saveMedicationInfo.getStartDate();
+        LocalDate endDate = saveMedicationInfo.getEndDate();
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+
+        for (LocalDate currentDate = startDate; !currentDate.isAfter(endDate); currentDate = currentDate.plusDays(1)) {
+            for (String t : time) {
+                LocalTime localTime = LocalTime.parse(t , formatter); // 초 정보는 제외하고 시분 정보만 파싱
+
+                if (meal == Meal.BEFORE_MEAL) {
+                    localTime = localTime.minusMinutes(30);
+                } else if (meal == Meal.AFTER_MEAL) {
+                    localTime = localTime.plusMinutes(30);
+                }
+
+                Alarm alarm = new Alarm(medicationInfo, medicationInfo.getMemo() + " 먹을 시간입니다", localTime, meal, currentDate);
+                alarm.initStatus();
+                alarmService.save(alarm);
+
+                AlarmDto alarmDto = new AlarmDto(alarm);
+                System.out.println(alarmDto.getTime());
+                alarmDtoList.add(alarmDto);
+            }
+        }
+
+        return ResponseEntity.ok().body(alarmDtoList);
     }
 
     @DeleteMapping("/{medicationInfoId}")
@@ -104,7 +137,7 @@ public class MedicationInfoController {
     }
 
     @PostMapping("/image/{loginId}")
-    public List<MedicationInfoDto> sendImageToPython(@RequestPart MultipartFile imageFile,@PathVariable String loginId,String memo) throws Exception {
+    public ResponseEntity<List<AlarmDto>> sendImageToPython(@RequestPart MultipartFile imageFile, @PathVariable String loginId, String memo, Meal meal, String... times) throws Exception {
         // Python 서버 URL 설정
         String pythonUrl = "http://127.0.0.1:5000/ocr";
 
@@ -132,15 +165,14 @@ public class MedicationInfoController {
         String responseContent = EntityUtils.toString(responseEntity);
         User user = userService.findUserByLoginId(loginId);
 
-
-        return processOcrResult(responseContent, user, memo);
+        return processOcrResult(responseContent, user, memo, meal, times);
     }
 
-    public List<MedicationInfoDto> processOcrResult(String json, User user,String memo) throws JsonProcessingException {
+    public ResponseEntity<List<AlarmDto>> processOcrResult(String json, User user, String memo, Meal meal, String... time) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonResponse = objectMapper.readTree(json);
         ArrayList<MedicationInfo> medicationInfos = new ArrayList<>();
-
+        ArrayList<AlarmDto> alarmDtoList = new ArrayList<>();
         if (jsonResponse.isArray()) {
             for (JsonNode objectNode : jsonResponse) {
                 String name = objectNode.get("name").asText();
@@ -148,16 +180,34 @@ public class MedicationInfoController {
                 int times = objectNode.get("times").asInt();
                 int days = objectNode.get("days").asInt();
 
-                MedicationInfo medicationInfo = new MedicationInfo(user, LocalDate.now(), name,times,tablet,days, memo);
+                MedicationInfo medicationInfo = new MedicationInfo(user, LocalDate.now(), name, times, tablet, days, memo);
                 medicationInfo.firstState();
                 medicationInfoService.save(medicationInfo);
-                medicationInfos.add(medicationInfo);
+                LocalDate startDate = medicationInfo.getStartDate();
+                LocalDate endDate = medicationInfo.getEndDate();
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+                for (LocalDate currentDate = startDate; !currentDate.isAfter(endDate); currentDate = currentDate.plusDays(1)) {
+                    for (String t : time) {
+                        LocalTime localTime = LocalTime.parse(t, formatter);
+
+                        if (meal == Meal.BEFORE_MEAL) {
+                            localTime = localTime.minusMinutes(30);
+                        } else if (meal == Meal.AFTER_MEAL) {
+                            localTime = localTime.plusMinutes(30);
+                        }
+
+                        Alarm alarm = new Alarm(medicationInfo, medicationInfo.getMemo() + " 먹을 시간입니다", localTime, meal, currentDate);
+                        alarm.initStatus();
+                        alarmService.save(alarm);
+
+                        AlarmDto alarmDto = new AlarmDto(alarm);
+                        alarmDtoList.add(alarmDto);
+                    }
+                }
             }
         }
 
-        return medicationInfos.stream()
-                .map(MedicationInfoDto::new)
-                .collect(Collectors.toList());
+        return ResponseEntity.ok().body(alarmDtoList);
     }
 
     @ApiOperation("복용중인 약정보 받기")
