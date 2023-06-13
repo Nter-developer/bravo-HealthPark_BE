@@ -58,13 +58,31 @@ public class MedicationInfoController {
 
         List<AlarmDto> alarmDtoList = new ArrayList<>();
         LocalDate startDate = saveMedicationInfo.getStartDate();
-        LocalDate endDate = saveMedicationInfo.getEndDate();
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
 
-        for (LocalDate currentDate = startDate; !currentDate.isAfter(endDate); currentDate = currentDate.plusDays(1)) {
+        int count = 0;
+        boolean compareDate=true;
+        int compareTime=0;
+        LocalDate currentDate =startDate;
+
+        int totalTimes = medicationInfo.getDays() * medicationInfo.getTimes();
+
+        while (count < totalTimes) {
             for (String t : time) {
-                LocalTime localTime = LocalTime.parse(t , formatter); // 초 정보는 제외하고 시분 정보만 파싱
+                LocalTime localTime = LocalTime.parse(t, formatter); // 초 정보는 제외하고 시분 정보만 파싱
+
+                if (currentDate.equals(startDate) && LocalTime.now().isAfter(localTime) && compareDate) {
+                    compareTime++;
+                    if (compareTime == medicationInfo.getTimes()) {
+                        compareDate = false;
+                    }
+                    continue;
+                }
+
+                if (count >= totalTimes) {
+                    break;
+                }
 
                 if (meal == Meal.BEFORE_MEAL) {
                     localTime = localTime.minusMinutes(30);
@@ -77,23 +95,25 @@ public class MedicationInfoController {
                 alarmService.save(alarm);
 
                 AlarmDto alarmDto = new AlarmDto(alarm);
-                System.out.println(alarmDto.getTime());
                 alarmDtoList.add(alarmDto);
+
+                count++;
             }
+            currentDate = currentDate.plusDays(1);
         }
 
         return ResponseEntity.ok().body(alarmDtoList);
     }
 
     @DeleteMapping("/{medicationInfoId}")
-    public ResponseEntity<?> delete(@PathVariable Long medicationInfoId){
+    public ResponseEntity<?> delete(@PathVariable Long medicationInfoId) {
         medicationInfoService.delete(medicationInfoId);
 
         return ResponseEntity.ok().body(null);
     }
 
     @GetMapping("")
-    public ResponseEntity<MedicationInfoDto> findMedicationInfo(@RequestParam Long medicationInfoId){
+    public ResponseEntity<MedicationInfoDto> findMedicationInfo(@RequestParam Long medicationInfoId) {
         MedicationInfo medicationInfo = medicationInfoService.findByMedicationInfoId(medicationInfoId);
 
         MedicationInfoDto medicationInfoDto = new MedicationInfoDto(medicationInfo);
@@ -103,7 +123,7 @@ public class MedicationInfoController {
 
     @ApiOperation("모든 medication Info정보 받기")
     @GetMapping("/all")
-    public ResponseEntity<List<MedicationInfoDto>> allMedicationInfo(@RequestParam String loginId){
+    public ResponseEntity<List<MedicationInfoDto>> allMedicationInfo(@RequestParam String loginId) {
         List<MedicationInfo> medicationInfos = medicationInfoService.findAllByLoginId(loginId);
 
         List<MedicationInfoDto> medicationInfoDtos = medicationInfos.stream()
@@ -116,9 +136,9 @@ public class MedicationInfoController {
     @ApiOperation("복용정보 수정")
     @PatchMapping("/{medicationInfoId}")
     public ResponseEntity<MedicationInfoDto> updateInfo(@PathVariable Long medicationInfoId,
-                                                        @RequestBody MedicationInfoForm form){
+                                                        @RequestBody MedicationInfoForm form) {
         MedicationInfo medicationInfo = medicationInfoService.findByMedicationInfoId(medicationInfoId);
-        medicationInfoService.updateInfo(medicationInfo,form);
+        medicationInfoService.updateInfo(medicationInfo, form);
 
         MedicationInfoDto medicationInfoDto = new MedicationInfoDto(medicationInfo);
 
@@ -127,7 +147,7 @@ public class MedicationInfoController {
 
     @ApiOperation("복용정보 현재상태에서 바꾸기")
     @PatchMapping("/state/{medicationInfoId}")
-    public ResponseEntity<MedicationInfoDto> changeState(@PathVariable Long medicationInfoId){
+    public ResponseEntity<MedicationInfoDto> changeState(@PathVariable Long medicationInfoId) {
         MedicationInfo medicationInfo = medicationInfoService.findByMedicationInfoId(medicationInfoId);
         medicationInfoService.changeState(medicationInfo);
 
@@ -184,11 +204,30 @@ public class MedicationInfoController {
                 medicationInfo.firstState();
                 medicationInfoService.save(medicationInfo);
                 LocalDate startDate = medicationInfo.getStartDate();
-                LocalDate endDate = medicationInfo.getEndDate();
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
-                for (LocalDate currentDate = startDate; !currentDate.isAfter(endDate); currentDate = currentDate.plusDays(1)) {
+
+                int count = 0;
+                boolean compareDate=true;
+                int compareTime=0;
+                LocalDate currentDate =startDate;
+
+                int totalTimes = medicationInfo.getDays() * medicationInfo.getTimes();
+
+                while (count < totalTimes) {
                     for (String t : time) {
-                        LocalTime localTime = LocalTime.parse(t, formatter);
+                        LocalTime localTime = LocalTime.parse(t, formatter); // 초 정보는 제외하고 시분 정보만 파싱
+
+                        if (currentDate.equals(startDate) && LocalTime.now().isAfter(localTime) && compareDate) {
+                            compareTime++;
+                            if (compareTime == medicationInfo.getTimes()) {
+                                compareDate = false;
+                            }
+                            continue;
+                        }
+
+                        if (count >= totalTimes) {
+                            break;
+                        }
 
                         if (meal == Meal.BEFORE_MEAL) {
                             localTime = localTime.minusMinutes(30);
@@ -202,7 +241,9 @@ public class MedicationInfoController {
 
                         AlarmDto alarmDto = new AlarmDto(alarm);
                         alarmDtoList.add(alarmDto);
+                        count++;
                     }
+                    currentDate=currentDate.plusDays(1);
                 }
             }
         }
@@ -212,7 +253,7 @@ public class MedicationInfoController {
 
     @ApiOperation("복용중인 약정보 받기")
     @GetMapping("/Doing")
-    public ResponseEntity<List<MedicationInfoDto>> getInfoByDoing(@RequestParam String loginId){
+    public ResponseEntity<List<MedicationInfoDto>> getInfoByDoing(@RequestParam String loginId) {
         List<MedicationInfo> medicationInfos = medicationInfoService.findByState(loginId, State.DOING);
         List<MedicationInfoDto> medicationInfoDtos = medicationInfos.stream()
                 .map(MedicationInfoDto::new)
@@ -223,7 +264,7 @@ public class MedicationInfoController {
 
     @ApiOperation("복용완료한 약정보 받기")
     @GetMapping("/Finished")
-    public ResponseEntity<List<MedicationInfoDto>> getInfoByFinished(@RequestParam String loginId){
+    public ResponseEntity<List<MedicationInfoDto>> getInfoByFinished(@RequestParam String loginId) {
         List<MedicationInfo> medicationInfos = medicationInfoService.findByState(loginId, State.FINISHED);
         List<MedicationInfoDto> medicationInfoDtos = medicationInfos.stream()
                 .map(MedicationInfoDto::new)
@@ -234,12 +275,11 @@ public class MedicationInfoController {
 
     @ApiOperation("약이름으로 정보 받기")
     @GetMapping("/item")
-    public ResponseEntity<List<MedicationInfoDto>> getInfoByItemName(@RequestParam String itemName,@RequestParam String loginId){
-        List<MedicationInfo> medicationInfoList = medicationInfoService.findByItemNameAndLoginId(itemName,loginId);
+    public ResponseEntity<List<MedicationInfoDto>> getInfoByItemName(@RequestParam String itemName, @RequestParam String loginId) {
+        List<MedicationInfo> medicationInfoList = medicationInfoService.findByItemNameAndLoginId(itemName, loginId);
         List<MedicationInfoDto> medicationInfoDtos = medicationInfoList.stream()
                 .map(MedicationInfoDto::new)
                 .collect(Collectors.toList());
-
         return ResponseEntity.ok().body(medicationInfoDtos);
     }
 }
