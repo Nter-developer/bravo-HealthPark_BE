@@ -68,8 +68,8 @@ public class CalendarController {
 
     @ApiOperation(value = "캘린더 전체 찾기")
     @GetMapping("/all")
-    public ResponseEntity<List<CalendarDto>> searchCalendarAll(@RequestParam Long userId) {
-        List<Calendar> calendarList = calendarService.findCalendarAllByUser(userId);
+    public ResponseEntity<List<CalendarDto>> searchCalendarAll(@RequestParam Long loginId) {
+        List<Calendar> calendarList = calendarService.findCalendarAllByUser(loginId);
 
         List<CalendarDto> result = calendarList.stream()
                 .map(c -> new CalendarDto(c))
