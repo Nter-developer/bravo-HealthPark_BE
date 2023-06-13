@@ -157,9 +157,9 @@ public class AlarmController {
     }
 
     @ApiOperation(value = "유저별 알람 상태에 따라알람 찾기")
-    @GetMapping("/status/{userId}")
-    public ResponseEntity<List<AlarmDto>> searchAlarmByUserAndStatus(@PathVariable Long userId, AlarmStatus alarmStatus) {
-        List<Alarm> alarmList = alarmService.findAlarmByUserAndStatus(userId, alarmStatus);
+    @GetMapping("/status/{loginId}")
+    public ResponseEntity<List<AlarmDto>> searchAlarmByUserAndStatus(@PathVariable Long loginId, AlarmStatus alarmStatus) {
+        List<Alarm> alarmList = alarmService.findAlarmByUserAndStatus(loginId, alarmStatus);
 
         if (alarmList.isEmpty()) {
             log.debug("정보가 없습니다.");
