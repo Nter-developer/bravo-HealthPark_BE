@@ -31,42 +31,6 @@ public class AlarmController {
     private final AlarmService alarmService;
     private final MedicationInfoService medicationInfoService;
 
-    @ApiOperation(value = "알람 생성")
-    @PostMapping("/{loginId}")
-    public ResponseEntity<List<AlarmDto>> createAlarm(@PathVariable String loginId, Meal meal, String... times) {
-        List<MedicationInfo> medicationInfoList = medicationInfoService.findAllByLoginId(loginId);
-        List<AlarmDto> alarmDtoList = new ArrayList<>();
-
-        for (MedicationInfo medicationInfo : medicationInfoList) {
-            LocalDate startDate = medicationInfo.getStartDate();
-            LocalDate endDate = medicationInfo.getEndDate();
-
-
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
-
-            for (LocalDate currentDate = startDate; !currentDate.isAfter(endDate); currentDate = currentDate.plusDays(1)) {
-                for (String time : times) {
-                    LocalTime localTime = LocalTime.parse(time, formatter);
-
-                    if (meal == Meal.BEFORE_MEAL) {
-                        localTime = localTime.minusMinutes(30);
-                    } else if (meal == Meal.AFTER_MEAL){
-                        localTime = localTime.plusMinutes(30);
-                    }
-
-                    Alarm alarm = new Alarm(medicationInfo, medicationInfo.getMemo() + " 먹을 시간입니다", localTime, meal, currentDate);
-                    alarm.initStatus();
-                    alarmService.save(alarm);
-
-                    AlarmDto alarmDto = new AlarmDto(alarm);
-                    alarmDtoList.add(alarmDto);
-                }
-            }
-        }
-
-        return ResponseEntity.ok().body(alarmDtoList);
-    }
-
     @ApiOperation(value = "알람 삭제")
     @DeleteMapping("/{alarmId}")
     public ResponseEntity<AlarmDto> deleteAlarm(@PathVariable Long alarmId) {
